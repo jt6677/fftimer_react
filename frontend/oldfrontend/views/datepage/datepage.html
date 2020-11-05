@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>LFG</title>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600,700" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/assets/datepage/datepage.css">
+    <!-- <link rel="stylesheet" type="text/css" href="/assets/navbar/navbarstyles.css"> -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+</head>
+<script>
+    $(document).ready(function () {
+        var date = new Date();
+
+        var day = date.getDate();
+        var month = date.getMonth() + 1;
+        var year = date.getFullYear();
+
+        if (month < 10) month = "0" + month;
+        if (day < 10) day = "0" + day;
+
+        var today = year + "-" + month + "-" + day;
+        $("#datePicker").attr("value", today);
+    });
+</script>
+
+<body>
+    {{template "navbar" .}}
+    {{if .Alert}}
+    {{template "alert" .Alert}}
+    {{end}}
+    <div class="box">
+        <div id="container">
+            <img class="logo" src="/assets/circle250.png" />
+            <h1>Fall Forward</h1>
+            <section class="welcome">
+                <p id="firstp">"Drop By Drop,</p>
+                <p id="secondp"> "The Bucket Will Be Filled."</p>
+
+                <form id="dateinput" class="signinform" action="/dateinput" autocomplete="off" method="POST">
+                    <section>
+                        <div class="field signin">
+                            <label for="date"><svg class="icon">
+                                    <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#calendar"></use>
+                                </svg></label>
+                            <input type="date" id="datePicker" name="date" required />
+
+                        </div>
+                    </section>
+                    <ul class="buttons">
+                        <li><input type="submit" value="Go" class="primary signinbutton "></li>
+                        <li><a href="/datepage/index" class="minor">&#10229; Date Index</a></li>
+                    </ul>
+                </form>
+
+        </div>
+    </div>
+    <div class="foot">
+        {{template "footer"}}
+    </div>
+
+    <svg xmlns="http://www.w3.org/2000/svg" class="icons hidden">
+        <symbol id="calendar" viewBox="0 0 32 32" fill="none" stroke="currentcolor" stroke-linecap="round"
+            stroke-linejoin="round" stroke-width="6.25%">
+            <path d="M2 6 L2 30 30 30 30 6 Z M2 15 L30 15 M7 3 L7 9 M13 3 L13 9 M19 3 L19 9 M25 3 L25 9" />
+        </symbol>
+    </svg>
+
+</body>
+
+
+</html>

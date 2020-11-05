@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>LFG</title>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600,700" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/assets/signinsignup/signinsignup.css">
+</head>
+
+<body>
+    {{template "navbar" .}}
+    {{if .Alert}}
+    {{template "alert" .Alert}}
+    {{end}}
+    <div class="box" id="container">
+        <img class="logo" src="/assets/circle250.png" />
+        <h1>Fall Forward</h1>
+        <!-- signup form -->
+        <form id="signupform" class="hidden signupform" action="/signup" method="POST" style="display: block;">
+            <section>
+                <div class="field signup">
+                    <label for="name"><svg class="icon">
+                            <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#user"></use>
+                        </svg></label>
+                    <input type="text" name="name" id="name" placeholder="Username">
+                </div>
+                <div class="field signup">
+                    <label for="cellphone"><svg class="icon">
+                            <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#mobile"></use>
+                        </svg></label>
+                    <input type="text" name="cellphone" id="cellphone" placeholder="Cellphone">
+                </div>
+                <div class="field signup">
+                    <label for="password"><svg class="icon">
+                            <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#lock"></use>
+                        </svg></label>
+                    <input type="password" name="password" id="password" placeholder="Password">
+                </div>
+            </section>
+            <ul class="buttons">
+                <li><input type="submit" value="Sign Up" class="primary signupbutton disabled"></li>
+                <li><a href="/signinandsignup#" class="minor">&#10229; Go back</a></li>
+            </ul>
+        </form>
+    </div>
+
+    {{template "footer"}}
+
+    <svg xmlns="http://www.w3.org/2000/svg" class="icons hidden">
+        <symbol id="user" viewBox="0 0 32 32" fill="none" stroke="currentcolor" stroke-linecap="round"
+            stroke-linejoin="round" stroke-width="6.25%">
+            <path
+                d="M22 11 C22 16 19 20 16 20 13 20 10 16 10 11 10 6 12 3 16 3 20 3 22 6 22 11 Z M4 30 L28 30 C28 21 22 20 16 20 10 20 4 21 4 30 Z" />
+        </symbol>
+        <symbol id="lock" viewBox="0 0 32 32" fill="none" stroke="currentcolor" stroke-linecap="round"
+            stroke-linejoin="round" stroke-width="6.25%">
+            <path d="M5 15 L5 30 27 30 27 15 Z M9 15 C9 9 9 5 16 5 23 5 23 9 23 15 M16 20 L16 23" />
+            <!-- <circle cx="16" cy="24" r="1" /> -->
+        </symbol>
+        <symbol id="mobile" viewBox="0 0 32 32" fill="none" stroke="currentcolor" stroke-linecap="round"
+            stroke-linejoin="round" stroke-width="6.25%">
+            <path
+                d="M21 2 L11 2 C10 2 9 3 9 4 L9 28 C9 29 10 30 11 30 L21 30 C22 30 23 29 23 28 L23 4 C23 3 22 2 21 2 Z M9 5 L23 5 M9 27 L23 27" />
+        </symbol>
+    </svg>
+
+
+
+    <script src="/assets/signinsignup/signinsignup.js">
+    </script>
+
+
+</body>
+
+</html>

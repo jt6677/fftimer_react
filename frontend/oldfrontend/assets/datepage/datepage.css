@@ -1,0 +1,265 @@
+/*
+* Prefixed by https://autoprefixer.github.io
+* PostCSS: v7.0.29,
+* Autoprefixer: v9.7.6
+* Browsers: last 4 version
+*/
+
+body {
+  display: -ms-grid;
+  display: grid;
+  grid-template-areas:
+    "nav"
+    "alert"
+    "main"
+    "foot";
+  grid-gap: 10px;
+  background-color: #1c202a;
+  /* background-image: url(/assets/login/rocket-page-bkg.png); */
+  /* background-position: center;
+    background-size: cover; */
+  font-family: "Open Sans", sans-serif;
+  font-size: 100%;
+  /* height: 90vh;
+  letter-spacing: 0.03125rem;
+  line-height: 1.5rem;
+  position: relative;
+  width: 90vw; */
+}
+
+.box {
+  -ms-grid-row: 5;
+  -ms-grid-column: 1;
+  grid-area: main;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+}
+
+h1,
+p {
+  margin-bottom: 1rem;
+  margin-top: 1rem;
+}
+
+h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  letter-spacing: 0.125rem;
+}
+
+p {
+  font-size: 1rem;
+  font-weight: 400;
+}
+
+#firstp {
+  margin-bottom: 0.2rem;
+  margin-top: 1rem;
+}
+
+#secondp {
+  margin-bottom: 1rem;
+  margin-top: 0.2rem;
+}
+
+#container {
+  color: #fff;
+  text-align: center;
+  min-height: 525px;
+  width: 320px;
+  position: relative;
+  margin: auto;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+.buttons {
+  margin: 0;
+  padding: 0;
+}
+
+.buttons li {
+  list-style-type: none;
+  margin-bottom: 1rem;
+}
+
+.buttons li:last-child {
+  margin-bottom: 0;
+}
+
+.buttons a {
+  border: solid 2px #fff;
+  border-radius: 4px;
+  color: #fff;
+  display: block;
+  font-weight: 600;
+  padding: 1rem;
+  padding: calc(1rem - 2px);
+  text-decoration: none;
+  -webkit-transition: all 0.2s ease;
+  -o-transition: all 0.2s ease;
+  transition: all 0.2s ease;
+  vertical-align: middle;
+}
+
+.buttons a:hover {
+  background: #737d9c;
+  border-color: #737d9c;
+}
+
+.buttons .primary {
+  background-color: #e0280c;
+  border-color: #e0280c;
+  border: none;
+  border-bottom: solid 4px #c0180c;
+  color: #fff;
+}
+
+.buttons .primary:hover {
+  background: #f0382c;
+  border-color: #c0180c;
+}
+
+.buttons .primary:active {
+  background: #c0180c;
+}
+
+.buttons .minor {
+  border: none;
+  color: #c1c1c1;
+  display: inline-block;
+  padding: 0.5rem;
+}
+
+.buttons .minor:hover {
+  background: none;
+  color: #fff;
+}
+
+.buttons .disabled {
+  background: none;
+  border: solid 2px #969696;
+  color: #969696;
+  pointer-events: none;
+}
+
+form .field {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  margin-bottom: 1rem;
+}
+
+form input[type="date"] {
+  border: none;
+  border-radius: 4px;
+  color: #969696;
+  font: inherit;
+  padding: 1rem;
+  width: 100%;
+}
+
+form input[type="password"],
+form input[type="text"],
+form input[type="submit"] {
+  border: none;
+  border-radius: 4px;
+  color: #fff;
+  font: inherit;
+  padding: 1rem;
+  width: 100%;
+}
+
+form input[type="date"],
+form input[type="password"],
+form input[type="text"] {
+  background-color: #3b4148;
+  border-radius: 0 4px 4px 0;
+}
+
+form input[type="date"]:focus,
+form input[type="date"]:hover,
+form input[type="password"]:focus,
+form input[type="password"]:hover,
+form input[type="text"]:focus,
+form input[type="text"]:hover {
+  background-color: #434a52;
+  outline: none;
+}
+
+form input[type="submit"] {
+  cursor: pointer;
+  font-weight: 600;
+  padding: 1rem;
+  padding: calc(1rem - 2px);
+  -webkit-transition: all 0.2s ease;
+  -o-transition: all 0.2s ease;
+  transition: all 0.2s ease;
+}
+
+form input[type="submit"]:focus {
+  background: #f0382c;
+  outline: none;
+}
+
+form input[type="submit"]:active {
+  background: #c0180c;
+}
+
+form label {
+  background-color: #363b41;
+  border-radius: 4px 0 0 4px;
+  padding: 1rem;
+}
+
+.icon {
+  display: inline-block;
+  fill: #fff;
+  height: 1.5rem;
+  width: 2rem;
+  vertical-align: middle;
+}
+
+/* 
+#footer {
+    display: block;
+    position: fixed;
+    bottom: 20px;
+    font-size: 0.875em;
+    text-align: center;
+    width: 100%;
+}
+
+#footer ul {
+    padding: 0;
+}
+
+#footer li {
+    border-left: solid 1px #737D9C;
+    display: inline-block;
+    list-style-type: none;
+    padding: 0 1em;
+}
+
+#footer li:first-child {
+    border: none;
+}
+
+#footer a {
+    color: #737D9C;
+    text-decoration: none;
+}
+
+#footer a:hover {
+    color: #c1c1c1;
+} */
+
+.hidden {
+  display: none;
+}
