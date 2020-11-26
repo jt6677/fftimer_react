@@ -1,13 +1,13 @@
-import { SIGN_IN, AUTH_USER, AUTH_ERROR } from "./types";
+import { AUTH_USER, AUTH_ERROR } from "./types";
 import history from "../history";
 import server from "../apis/server";
 
 export const signUp = (formValues) => async (dispatch) => {
   try {
     const response = await server.post("/signup", { ...formValues });
-    if (response.data.error !== false) {
-      dispatch({ type: AUTH_ERROR, payload: response.data.errorMSG });
-      console.log(response.data.errorMSG);
+    if (response.data.errormsg !== "") {
+      dispatch({ type: AUTH_ERROR, payload: response.data.errormsg });
+      console.log(response.data.errormsg);
     } else {
       dispatch({ type: AUTH_USER, payload: response.data.token });
       localStorage.setItem("token", response.data.token);
@@ -22,9 +22,9 @@ export const signUp = (formValues) => async (dispatch) => {
 export const signIn = (formValues) => async (dispatch) => {
   try {
     const response = await server.post("/signin", { ...formValues });
-    if (response.data.error !== false) {
-      dispatch({ type: AUTH_ERROR, payload: response.data.errorMSG });
-      console.log(response.data.errorMSG);
+    if (response.data.errormsg !== "") {
+      dispatch({ type: AUTH_ERROR, payload: response.data.errormsg });
+      console.log(response.data.errormsg);
     } else {
       dispatch({ type: AUTH_USER, payload: response.data.token });
       localStorage.setItem("token", response.data.token);

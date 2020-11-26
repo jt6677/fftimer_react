@@ -20,11 +20,7 @@ export class Signup extends Component {
   onSubmit = (formValues) => {
     this.props.signUp(formValues);
   };
-  // onSubmit = (formValues) => {
-  //   this.props.signUp(formValues, () => {
-  //     this.props.history.push("/");
-  //   });
-  // };
+
   renderInput = (formProps) => {
     return (
       <div>
@@ -125,4 +121,4 @@ const mapDispatchToProps = {
   signUp,
 };
 
-export default connect(mapStateToProps, { mapDispatchToProps })(formWrapped);
+export default connect(mapStateToProps, mapDispatchToProps)(formWrapped);

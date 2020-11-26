@@ -1,4 +1,4 @@
-module github.com/jt6677/htmlTimer/timerGit
+module github.com/jt6677/ffdtimer
 
 go 1.14
 

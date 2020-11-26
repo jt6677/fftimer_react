@@ -6,8 +6,9 @@ import (
 
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
-	"github.com/jt6677/htmlTimer/timerGit/hash"
-	"github.com/jt6677/htmlTimer/timerGit/rand"
+	"github.com/jt6677/ffdtimer/hash"
+	"github.com/jt6677/ffdtimer/rand"
+
 	"golang.org/x/crypto/bcrypt"
 )
 
