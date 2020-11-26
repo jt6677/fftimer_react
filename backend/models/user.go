@@ -359,7 +359,7 @@ func (uv *userValidator) passwordMinLength(user *User) error {
 	if user.Password == "" {
 		return nil
 	}
-	if len(user.Password) < 8 {
+	if len(user.Password) < 6 {
 		return ErrPasswordTooShort
 	}
 	return nil

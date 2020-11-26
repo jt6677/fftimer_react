@@ -18,10 +18,10 @@ var sCount int
 
 func main() {
 	cfg := LoadConfig()
-	// psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
-	// 	cfg.Database.Host, cfg.Database.Port, cfg.Database.User, cfg.Database.Password, cfg.Database.Name)
+	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
+		cfg.Database.Host, cfg.Database.Port, cfg.Database.User, cfg.Database.Password, cfg.Database.Name)
 	services, err := models.NewServices(
-		// models.WithGorm("postgres", psqlInfo),
+		models.WithGorm("postgres", psqlInfo),
 
 		models.WithUser(cfg.PwPepper, cfg.HMACkey),
 
@@ -30,9 +30,9 @@ func main() {
 	)
 	must(err)
 
-	// defer services.Close()
-	// // services.DestructiveReset()
-	// services.AutoMigrate()
+	defer services.Close()
+	// services.DestructiveReset()
+	services.AutoMigrate()
 
 	// timeblockC := controllers.NewTimeblocks(services.Timeblock, services.Date, cfg.TimerDuration)
 	userC := controllers.NewUsers(services.User)

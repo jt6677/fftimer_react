@@ -20,7 +20,9 @@ func WithGorm(dialect, connectionInfo string) ServicesConfig {
 		if err != nil {
 			return err
 		}
+
 		s.db = db
+
 		s.db.LogMode(true)
 		return nil
 	}

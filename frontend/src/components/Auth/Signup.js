@@ -14,7 +14,7 @@ export const minLength = (min) => (value) =>
   value && value.length < min ? `Must be ${min} characters or more` : undefined;
 export const minLength4 = minLength(4);
 export const minLength6 = minLength(6);
-export const minLength13 = minLength(13);
+export const minLength11 = minLength(11);
 
 export class Signup extends Component {
   onSubmit = (formValues) => {
@@ -68,7 +68,7 @@ export class Signup extends Component {
                 name="cellphone"
                 placeholder="Cellphone"
                 component={this.renderInput}
-                validate={[required, minLength13]}
+                validate={[required, minLength11]}
                 label="mobile"
               />
 
