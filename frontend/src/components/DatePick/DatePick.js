@@ -1,9 +1,9 @@
 import React, { Component } from "react";
-import "./DatePick.css";
-
-import server from "../../apis/server";
+import "../Auth/Signin";
 import ReduxForm from "../ReduxForm/ReduxForm.js";
 import Fallfowardpage from "../FallFowardPage/fallfowardpage";
+import requireAuth from "../Auth/requireAuth";
+import server from "../../apis/server";
 
 export class DatePick extends Component {
   onSubmit(formValues) {
@@ -31,19 +31,16 @@ export class DatePick extends Component {
 
     return `${today}`;
   }
+  sendCookie = async () => {
+    try {
+      const resp = server.get("/cookie", { withCredentials: true });
 
+      console.log(resp.data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
   render() {
-    // let date = new Date();
-
-    // let day = date.getDate();
-    // let month = date.getMonth() + 1;
-    // let year = date.getFullYear();
-
-    // if (month < 10) month = "0" + month;
-    // if (day < 10) day = "0" + day;
-
-    // let today = year + "-" + month + "-" + day;
-
     return (
       <div className="main-body">
         <Fallfowardpage showWisdom={true} />
@@ -53,9 +50,10 @@ export class DatePick extends Component {
             onSubmit={this.onSubmit}
           />
         </div>
+        <button onClick={this.sendCookie}>Click Me</button>
       </div>
     );
   }
 }
 
-export default DatePick;
+export default requireAuth(DatePick);

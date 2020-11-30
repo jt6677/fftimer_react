@@ -90,9 +90,17 @@ func (u *Users) Login(w http.ResponseWriter, r *http.Request) {
 	u.signIn(w, founduser)
 
 }
+func (u *Users) Cookie(w http.ResponseWriter, r *http.Request) {
+	cookie, err := r.Cookie("remember_token")
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	fmt.Print(cookie)
+	respondJSON("Cookie is set", "", w)
+}
 
 func respondJSON(token string, errorMSG string, w http.ResponseWriter) {
-
 	resp := &ResponseJSON{Token: token, ErrorMSG: errorMSG}
 	err := json.NewEncoder(w).Encode(resp)
 	if err != nil {

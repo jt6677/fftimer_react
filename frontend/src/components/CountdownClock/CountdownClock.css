@@ -14,6 +14,7 @@
     word-wrap: break-word;
     color: #eee;
     padding-top: 6rem;
+    height: 100%;
 
 }
 
@@ -81,11 +82,6 @@
     position: absolute;
     top: 48px;
     right: -10px;
-}
-
-.tiles {
-    position: relative;
-    z-index: 1;
 }
 
 .minute {
@@ -168,18 +164,22 @@ p {
 
 }
 
+/* .mainbody {
+    font: normal 13px/20px;
+    font-family: "Open Sans", sans-serif;
+    word-wrap: break-word;
+    color: #eee;
 
+} */
 
 .buttonBlock {
     /* font: normal 13px/20px;
     font-family: "Open Sans", sans-serif;
     word-wrap: break-word;
-    
     color: #eee; */
-    padding-top: 1rem;
-    padding-bottom: 1rem;
+    padding-top: 20px;
+    padding-bottom: 50px;
     text-align: center;
-    font: 'Roboto Slab';
 }
 
 /* 
@@ -252,7 +252,6 @@ button:last-child {
     border-radius: 4px;
     color: #fff;
     display: inline-block;
-    font-family: 'Roboto Slab', serif;
     font-weight: 800;
     font-size: 1.3rem;
     padding: 1rem;
@@ -260,7 +259,8 @@ button:last-child {
     text-decoration: none;
     transition: all 0.2s ease;
     vertical-align: middle;
-
+    width: 7.2rem;
+    height: 4rem;
 }
 
 .ActiveButton:hover {
@@ -274,10 +274,6 @@ button:last-child {
     border: none;
     border-bottom: solid 4px #c0180c;
     color: #fff;
-    text-transform: uppercase;
-
-    width: 7rem;
-    height: 4rem;
 }
 
 .ActiveButton:hover {
@@ -305,11 +301,7 @@ button:last-child {
     background: none;
     border: solid 2px #969696;
     color: #969696;
-
-    width: 7rem;
-    height: 4rem;
     pointer-events: none;
-    text-transform: uppercase;
 }
 
 /* .textbox {

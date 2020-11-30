@@ -7,6 +7,7 @@ import SVGIcon from "../SVGIcon/SVGIcon";
 import { signIn } from "../../actions";
 import { Field, reduxForm } from "redux-form";
 import Fallfowardpage from "../FallFowardPage/fallfowardpage";
+import Timer from "../CountdownClock/Timer";
 
 const required = (value) =>
   value || typeof value === "number" ? undefined : "Required";
@@ -97,6 +98,8 @@ export class Signin extends Component {
             </div>
           </form>
         </div>
+
+        <Timer updateInterval={1000} />
       </div>
     );
   }

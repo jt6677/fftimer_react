@@ -1,38 +1,48 @@
-import React from "react";
+import React, { Component } from "react";
 import { Link } from "react-router-dom";
-import Auth from "../../Auth";
+import { connect } from "react-redux";
 
 import "./Navbar.css";
-
-function Navbar() {
-  return (
-    <div className="navbar  ">
-      {/* <a href="/logout">Logout</a>
-     
-        <a href="/signinandsignup">Signup</a>
-  
-        <a href="/timer">Timer</a>
-     
-        <a href="/">Date-Pick</a> */}
-      <Link
-        className="link text-link"
-        to="/"
-        style={{ backgroundImage: "none" }}
-      >
-        Timer
-      </Link>
-      <Link className="link text-link" to="/">
-        Date-pick
-      </Link>
-      <Link className="link text-link " to="/signinandsignup">
-        SignIn
-      </Link>
-      <Link className="link text-link " to="/datepick">
-        Date
-      </Link>
-      <Auth />
-    </div>
-  );
+export class Navbar extends Component {
+  renderAuthButton() {
+    if (!this.props.authenticated || this.props.authenticated === "") {
+      return (
+        <React.Fragment>
+          <Link className="link text-link " to="/signinandsignup">
+            New Account
+          </Link>
+          <Link className="link text-link " to="/signin">
+            Sign In
+          </Link>
+        </React.Fragment>
+      );
+    } else {
+      return (
+        <React.Fragment>
+          <Link className="link text-link" to="/">
+            Timer
+          </Link>
+          <Link className="link text-link" to="/datepick">
+            Date-pick
+          </Link>
+          <Link className="link text-link " to="/signout">
+            Sign Out
+          </Link>
+        </React.Fragment>
+      );
+    }
+  }
+  render() {
+    return (
+      <div className="navbar" style={{ backgroundImage: "none" }}>
+        {this.renderAuthButton()}
+      </div>
+    );
+  }
 }
 
-export default Navbar;
+const mapStateToProps = (state) => ({
+  authenticated: state.auth.authenticated,
+});
+
+export default connect(mapStateToProps)(Navbar);

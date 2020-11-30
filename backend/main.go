@@ -60,6 +60,7 @@ func main() {
 	// r.HandleFunc("/cookies", userC.CookieTest).Methods("GET")
 	r.HandleFunc("/signup", userC.SignUp).Methods("POST")
 	r.HandleFunc("/signin", userC.Login).Methods("POST")
+	r.HandleFunc("/cookie", userC.Cookie).Methods("GET")
 	// r.HandleFunc("/logout", requireUserMw.ApplyFn(userC.Logout)).Methods("GET")
 	fmt.Printf("Listen%v, System is all GO!\n", cfg.Port)
 

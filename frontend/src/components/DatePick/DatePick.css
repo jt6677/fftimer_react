@@ -12,59 +12,12 @@
     justify-items: center;
     align-items: center;
     font-family: 'Roboto Slab', serif;
+    height: 100%;
 }
 
-/* 
-.logo-container {
-
-    justify-items: center;
-    align-items: center;
-
-} */
-
-/* .logo {
-    align-items: center;
-    justify-content: center;
-    position: relative;
-} */
-
-.signin-container {
-
-
-    /* display: flex; */
-    /* flex-direction: column; */
-    align-items: center;
-    justify-content: center;
+.buttonList {
+    margin-top: 0.5rem
 }
-
-
-
-
-.signin-container {
-    color: #fff;
-    text-align: center;
-    min-height: 525px;
-    width: 320px;
-    align-items: center;
-    justify-content: center;
-    /* position: relative; */
-    margin: auto;
-    /* top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0; */
-
-}
-
-
-
-.slogon {
-    margin-bottom: 0rem;
-    margin-top: 1rem;
-
-}
-
-
 
 .buttons {
     margin: 0;
@@ -138,18 +91,24 @@
 
 
 .icon {
-    display: inline-block;
+    display: inline;
     fill: #fff;
     height: 1.5rem;
-    width: 2rem;
+    /* width: 2rem; */
     vertical-align: middle;
 }
 
+.errorMSG {
 
+    padding: 0;
+    margin: 0;
+    color: red;
+}
 
-form .field {
+.fields {
     display: flex;
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem;
+
 }
 
 form input[type="date"] {
@@ -157,26 +116,8 @@ form input[type="date"] {
     border-radius: 4px;
     color: #969696;
     font: inherit;
-    padding: 1rem;
+    /* padding: 1rem; */
     width: 100%;
-}
-
-.input_style {
-
-    border: none;
-    border-radius: 4px;
-    color: #fff;
-    font: inherit;
-    padding: 1rem;
-    width: 100%;
-    background-color: #3b4148;
-    border-radius: 0 4px 4px 0;
-}
-
-.input_style::focus,
-.input_style::hover {
-    background-color: #434a52;
-    outline: none;
 }
 
 form input[type="password"],
@@ -186,7 +127,7 @@ form input[type="submit"] {
     border-radius: 4px;
     color: #fff;
     font: inherit;
-    padding: 1rem;
+    /* padding: 1rem; */
     width: 100%;
 }
 
@@ -210,7 +151,7 @@ form input[type="text"]:hover {
 form input[type="submit"] {
     cursor: pointer;
     font-weight: 600;
-    padding: 1rem;
+    /* padding: 1rem; */
     padding: calc(1rem - 2px);
     transition: all 0.2s ease;
 }
@@ -227,12 +168,13 @@ form input[type="submit"]:active {
 form label {
     background-color: #363b41;
     border-radius: 4px 0 0 4px;
-    padding: 1rem;
+    /* padding: 1rem; */
 }
 
 
 
 
+/* 
 h1,
 p {
     margin-bottom: 1rem;
@@ -248,4 +190,4 @@ h1 {
 p {
     font-size: 1rem;
     font-weight: 400;
-}
+} */

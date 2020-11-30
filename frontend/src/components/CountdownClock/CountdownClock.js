@@ -1,11 +1,13 @@
 import React, { Component } from "react";
-import Button from "../Button/Button";
 import "./CountdownClock.css";
 import soundfile from "../../assets/welldone.mp3";
 import SessionTable from "../SessionTable/SessionTable.js";
+import requireAuth from "../Auth/requireAuth";
+let basetime = 5;
 export class CountdownClock extends Component {
   state = {
-    timer: 2,
+    timeRemain: basetime,
+    currentSessionID: null,
     minutes: "",
     seconds: "",
     counting: false,
@@ -21,6 +23,27 @@ export class CountdownClock extends Component {
     }
     return i;
   };
+  renderButtons() {
+    return (
+      <div className="buttonBlock">
+        <button
+          className={!this.state.counting ? " ActiveButton" : "ButtonDisabled"}
+          disabled={this.state.counting}
+          onClick={() => this.timerStart()}
+        >
+          Start
+        </button>
+        {"   "}
+        <button
+          className={this.state.counting ? " ActiveButton" : "ButtonDisabled"}
+          disabled={!this.state.counting}
+          onClick={() => this.timerPause()}
+        >
+          Pause
+        </button>
+      </div>
+    );
+  }
 
   getCurrentTime() {
     let d = new Date();
@@ -47,47 +70,47 @@ export class CountdownClock extends Component {
       };
     });
   };
-  timerStart = (signal) => {
-    if (signal) {
-      this.setState({
-        counting: true,
-        sessionStarted: this.getCurrentTime(),
-      });
-      const x = setInterval(() => {
+  timerStart = () => {
+    this.setState({
+      counting: true,
+      sessionStarted: this.getCurrentTime(),
+    });
+
+    const x = setInterval(() => {
+      // console.log(x);
+      // if (this.state.counting === false) {
+      //   clearInterval(x);
+      // }
+      if (this.state.timeRemain !== 0) {
+        this.setState((prevState) => {
+          return { timeRemain: prevState.timeRemain - 1 };
+        });
+        localStorage.setItem("timeRemain", this.state.timeRemain);
         this.countDown();
-
-        this.setState(
-          (prevState, prevProps) => {
-            return { timer: prevState.timer - 1 };
-          },
-
-          () => {
-            if (this.state.counting === false) {
-              clearInterval(x);
-            }
-            if (this.state.timer < 0) {
-              this.audio.play();
-              this.setState({
-                timer: 2,
-                counting: false,
-              });
-              this.onAddSession();
-              clearInterval(x);
-            }
-          }
-        );
-      }, 1000);
-    }
-    if (!signal) {
-      this.setState({
-        counting: false,
-      });
-      // clearInterval(x);
-    }
+      } else {
+        this.audio.play();
+        localStorage.removeItem("timeRemain");
+        this.setState({
+          timeRemain: basetime,
+          counting: false,
+        });
+        this.onAddSession();
+        clearInterval(x);
+      }
+    }, 1000);
+    this.setState({
+      currentSessionID: x,
+    });
   };
+  timerPause() {
+    clearInterval(this.state.currentSessionID);
+    this.setState({
+      counting: false,
+    });
+  }
   countDown = () => {
-    let minutes = parseInt(this.state.timer / 60, 10);
-    let seconds = parseInt(this.state.timer % 60, 10);
+    let minutes = parseInt(this.state.timeRemain / 60, 10);
+    let seconds = parseInt(this.state.timeRemain % 60, 10);
     minutes = minutes < 10 ? "0" + minutes : minutes;
     seconds = seconds < 10 ? "0" + seconds : seconds;
     this.setState({
@@ -95,7 +118,27 @@ export class CountdownClock extends Component {
       seconds: seconds,
     });
   };
-
+  componentDidMount() {
+    const t = localStorage.getItem("timeRemain");
+    if (t !== null) {
+      this.setState({
+        timeRemain: t,
+      });
+      let minutes = parseInt(t / 60, 10);
+      let seconds = parseInt(t % 60, 10);
+      minutes = minutes < 10 ? "0" + minutes : minutes;
+      seconds = seconds < 10 ? "0" + seconds : seconds;
+      this.setState({
+        minutes: minutes,
+        seconds: seconds,
+      });
+    } else {
+      this.setState({
+        timeRemain: basetime,
+      });
+      this.countDown();
+    }
+  }
   render() {
     return (
       <div className="mainbody">
@@ -111,18 +154,18 @@ export class CountdownClock extends Component {
             </div>
           </div>
         </div>
-        {/* <button onClick={audio.play()}></button> */}
-        <Button
+
+        {/* <Button
           timerStart={this.timerStart}
           counting={this.state.counting}
           startButton="Start"
           pauseButton="Pause"
-        />
+        /> */}
+        {this.renderButtons()}
         <SessionTable history={this.state.history} />
-        {/* <div>{historyMap}</div> */}
       </div>
     );
   }
 }
 
-export default CountdownClock;
+export default requireAuth(CountdownClock);

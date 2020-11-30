@@ -6,6 +6,7 @@ import CountdownClock from "./CountdownClock/CountdownClock";
 import SigninSignup from "./Auth/SigninSignup";
 import Signin from "./Auth/Signin";
 import Signup from "./Auth/Signup";
+import Signout from "./Auth/Signout";
 import DatePick from "./DatePick/DatePick";
 import history from "../history";
 
@@ -21,6 +22,7 @@ export class App extends Component {
             <Route path="/signinandsignup" exact component={SigninSignup} />
             <Route path="/signin" exact component={Signin} />
             <Route path="/signup" exact component={Signup} />
+            <Route path="/signout" exact component={Signout} />
             <Route path="/datepick" exact component={DatePick} />
           </Switch>
         </Router>
