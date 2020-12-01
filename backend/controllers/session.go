@@ -5,9 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"time"
 
-	"github.com/gorilla/mux"
 	"github.com/jt6677/ffdtimer/context"
 	"github.com/jt6677/ffdtimer/models"
 )
@@ -71,67 +69,68 @@ func (s *Sessions) RecordSession(w http.ResponseWriter, r *http.Request) {
 	respondJSON("Successfully Recorded currentSession", "", w)
 
 }
-func (s *Sessions) Show(w http.ResponseWriter, r *http.Request) {
-	//check UserID and DateID
-	timeblocks, count, err := s.dateByDateIDandUserID(r)
-	if err != nil {
-		switch err {
-		case models.ErrNotFound:
-			http.Error(w, "Not DateID Exisits", http.StatusNotFound)
-		default:
-			http.Error(w, "Whoops! Something went wrong.", http.StatusInternalServerError)
-		}
-	}
 
-	var vd views.Data
-	if count > 0 {
-		type Dateinfo struct {
-			Dateid string
-			Timed  time.Duration
-			Status bool
-		}
+// func (s *Sessions) Show(w http.ResponseWriter, r *http.Request) {
+// 	//check UserID and DateID
+// 	timeblocks, count, err := s.dateByDateIDandUserID(r)
+// 	if err != nil {
+// 		switch err {
+// 		case models.ErrNotFound:
+// 			http.Error(w, "Not DateID Exisits", http.StatusNotFound)
+// 		default:
+// 			http.Error(w, "Whoops! Something went wrong.", http.StatusInternalServerError)
+// 		}
+// 	}
 
-		// var durations []dateduration
-		D := make([]Dateinfo, count)
+// 	var vd views.Data
+// 	if count > 0 {
+// 		type Dateinfo struct {
+// 			Dateid string
+// 			Timed  time.Duration
+// 			Status bool
+// 		}
 
-		for i, ti := range timeblocks {
-			start := ti.CreatedAt
-			end := ti.UpdatedAt
-			t := -start.Sub(end).Truncate(time.Second)
-			// 	1h11m15.539182s
-			D[i] = Dateinfo{
-				Dateid: ti.DateID,
-				Timed:  t,
-				Status: ti.Finished,
-			}
-		}
-		type TimeblockTable struct {
-			Count     int64
-			Dateinfos []Dateinfo
-		}
-		T := &TimeblockTable{
-			Count:     count,
-			Dateinfos: D,
-		}
-		// fmt.Println(len(timeblocks))
-		vd.Yield = T
-	} else {
-		vd.Yield = nil
-	}
+// 		// var durations []dateduration
+// 		D := make([]Dateinfo, count)
 
-	t.ShowView.Render(w, r, vd)
-}
+// 		for i, ti := range timeblocks {
+// 			start := ti.CreatedAt
+// 			end := ti.UpdatedAt
+// 			t := -start.Sub(end).Truncate(time.Second)
+// 			// 	1h11m15.539182s
+// 			D[i] = Dateinfo{
+// 				Dateid: ti.DateID,
+// 				Timed:  t,
+// 				Status: ti.Finished,
+// 			}
+// 		}
+// 		type TimeblockTable struct {
+// 			Count     int64
+// 			Dateinfos []Dateinfo
+// 		}
+// 		T := &TimeblockTable{
+// 			Count:     count,
+// 			Dateinfos: D,
+// 		}
+// 		// fmt.Println(len(timeblocks))
+// 		vd.Yield = T
+// 	} else {
+// 		vd.Yield = nil
+// 	}
 
-func (s *Sessions) dateByDateIDandUserID(r *http.Request) ([]models.Timeblock, int64, error) {
-	vars := mux.Vars(r)
-	idStr := vars["id"]
-	// fmt.Println(idStr)
-	user := context.User(r.Context())
+// 	t.ShowView.Render(w, r, vd)
+// }
 
-	date, count, err := t.ts.ByDateIDandUserID(uint(user.ID), idStr)
-	if err != nil {
-		return nil, 0, err
-	}
+// func (s *Sessions) dateByDateIDandUserID(r *http.Request) ([]models.Session, int64, error) {
+// 	vars := mux.Vars(r)
+// 	idStr := vars["id"]
+// 	// fmt.Println(idStr)
+// 	user := context.User(r.Context())
 
-	return date, count, nil
-}
+// 	date, count, err := t.ts.ByDateIDandUserID(uint(user.ID), idStr)
+// 	if err != nil {
+// 		return nil, 0, err
+// 	}
+
+// 	return date, count, nil
+// }

@@ -51,8 +51,9 @@ func main() {
 	r.HandleFunc("/signup", userC.SignUp).Methods("POST")
 	r.HandleFunc("/signin", userC.Login).Methods("POST")
 	r.HandleFunc("/cookie", userC.Cookie).Methods("POST")
-
+	// r.HandleFunc("/datepage/{id:[0-9]+}", requireUserMw.ApplyFn(timeblockC.Show)).Methods("GET").Name("showDate")
 	fmt.Printf("Listen%v, System is all GO!\n", cfg.Port)
+
 	c := cors.New(cors.Options{
 		AllowedOrigins:   []string{"http://localhost:3000"},
 		AllowCredentials: true,
