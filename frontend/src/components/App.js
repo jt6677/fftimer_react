@@ -8,6 +8,7 @@ import Signin from "./Auth/Signin";
 import Signup from "./Auth/Signup";
 import Signout from "./Auth/Signout";
 import DatePick from "./DatePick/DatePick";
+import DateShow from "./DateShow/DateShow";
 import history from "../history";
 
 export class App extends Component {
@@ -24,6 +25,7 @@ export class App extends Component {
             <Route path="/signup" exact component={Signup} />
             <Route path="/signout" exact component={Signout} />
             <Route path="/datepick" exact component={DatePick} />
+            <Route path="/datepick/:id" exact component={DateShow} />
           </Switch>
         </Router>
       </div>

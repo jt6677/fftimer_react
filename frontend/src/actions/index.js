@@ -8,9 +8,9 @@ export const signUp = (formValues) => async (dispatch) => {
     if (response.data.errormsg !== "") {
       dispatch({ type: AUTH_ERROR, payload: response.data.errormsg });
     } else {
-      dispatch({ type: AUTH_USER, payload: response.data.token });
-      localStorage.setItem("remember_token", response.data.token);
-      Cookie.set("remember_token", response.data.token);
+      dispatch({ type: AUTH_USER, payload: response.data.response });
+      localStorage.setItem("remember_token", response.data.response);
+      Cookie.set("remember_token", response.data.response);
       history.push("/");
     }
   } catch (e) {
@@ -24,9 +24,9 @@ export const signIn = (formValues) => async (dispatch) => {
     if (response.data.errormsg !== "") {
       dispatch({ type: AUTH_ERROR, payload: response.data.errormsg });
     } else {
-      dispatch({ type: AUTH_USER, payload: response.data.token });
-      localStorage.setItem("remember_token", response.data.token);
-      Cookie.set("remember_token", response.data.token);
+      dispatch({ type: AUTH_USER, payload: response.data.response });
+      localStorage.setItem("remember_token", response.data.response);
+      Cookie.set("remember_token", response.data.response);
       history.push("/");
     }
   } catch (e) {

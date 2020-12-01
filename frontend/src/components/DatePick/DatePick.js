@@ -31,15 +31,7 @@ export class DatePick extends Component {
 
     return `${today}`;
   }
-  sendCookie = async () => {
-    try {
-      const resp = server.get("/cookie", { withCredentials: true });
 
-      console.log(resp.data);
-    } catch (err) {
-      console.log(err);
-    }
-  };
   render() {
     return (
       <div className="main-body">
@@ -48,9 +40,9 @@ export class DatePick extends Component {
           <ReduxForm
             initialValues={{ date: this.dateDefault() }}
             onSubmit={this.onSubmit}
+            displayFormat="YYYYMMDD"
           />
         </div>
-        <button onClick={this.sendCookie}>Click Me</button>
       </div>
     );
   }

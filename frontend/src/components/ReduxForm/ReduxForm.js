@@ -21,6 +21,7 @@ export class ReduxForm extends Component {
         type={formProps.type}
         placeholder={formProps.placeholder}
         autoComplete="off"
+        displayFormat="YYYYMMDD"
       />
     );
   };

@@ -3,11 +3,9 @@ import "./Signin.css";
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
 import SVGIcon from "../SVGIcon/SVGIcon";
-
 import { signIn } from "../../actions";
 import { Field, reduxForm } from "redux-form";
 import Fallfowardpage from "../FallFowardPage/fallfowardpage";
-import Timer from "../CountdownClock/Timer";
 
 const required = (value) =>
   value || typeof value === "number" ? undefined : "Required";
@@ -23,7 +21,7 @@ export class Signin extends Component {
 
   renderInput = (formProps) => {
     return (
-      <div>
+      <React.Fragment>
         <div className="fields">
           <label htmlFor="name">
             <SVGIcon className="icon" iconName={formProps.label} />
@@ -41,7 +39,7 @@ export class Signin extends Component {
             <span>{formProps.meta.error}</span>
           )}
         </div>
-      </div>
+      </React.Fragment>
     );
   };
 
@@ -58,7 +56,7 @@ export class Signin extends Component {
               <Field
                 type="text"
                 name="username"
-                placeholder="Username or Cellphone"
+                placeholder=" Username or Cellphone"
                 component={this.renderInput}
                 validate={[required, minLength4]}
                 label="user"
@@ -67,7 +65,7 @@ export class Signin extends Component {
               <Field
                 type="password"
                 name="password"
-                placeholder="Password"
+                placeholder=" Password"
                 component={this.renderInput}
                 validate={[required, minLength6]}
                 label="password"
@@ -98,8 +96,6 @@ export class Signin extends Component {
             </div>
           </form>
         </div>
-
-        <Timer updateInterval={1000} />
       </div>
     );
   }

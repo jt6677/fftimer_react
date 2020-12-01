@@ -3,7 +3,8 @@ import "./CountdownClock.css";
 import soundfile from "../../assets/welldone.mp3";
 import SessionTable from "../SessionTable/SessionTable.js";
 import requireAuth from "../Auth/requireAuth";
-let basetime = 5;
+import server from "../../apis/server";
+let basetime = 1;
 export class CountdownClock extends Component {
   state = {
     timeRemain: basetime,
@@ -14,7 +15,7 @@ export class CountdownClock extends Component {
     sessionStarted: "",
     history: [],
   };
-  //make a Audio object
+  //make a Audio objects
   audio = new Audio(soundfile);
   //addZero and getTime return 01:05:58
   addZero = (i) => {
@@ -23,6 +24,61 @@ export class CountdownClock extends Component {
     }
     return i;
   };
+  // sendCookie = async () => {
+  //   let ss = "ss";
+  //   try {
+  //     const resp = server.post("/cookie", { withCredentials: true, ss });
+
+  //     console.log(resp.data);
+  //   } catch (err) {
+  //     console.log(err);
+  //   }
+  sendEndSig = async () => {
+    let config = {
+      url: "/recordsession",
+      method: "post",
+      withCredentials: true,
+      data: {
+        startedat: this.state.sessionStarted,
+      },
+    };
+
+    try {
+      const resp = server.request(config);
+
+      console.log(resp.data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  //   axios("http://mysite.com/api/things/", {
+  //   method: "post",
+  //   data: someJsonData,
+  //   withCredentials: true
+  // })
+  // sendEndSig = async () => {
+  //   let startedat = this.state.sessionStarted;
+  //   try {
+  //     const resp = await server.post(
+  //       "/recordsession",
+
+  //       { withCredentials: true }
+  //     );
+  //     console.log(resp.data);
+  //   } catch (err) {
+  //     console.log(err);
+  //   }
+  // };
+  // sendCookie = async () => {
+  //   try {
+  //     const resp = server.get("/cookie", { withCredentials: true });
+
+  //     console.log(resp.data);
+  //   } catch (err) {
+  //     console.log(err);
+  //   }
+  // };
   renderButtons() {
     return (
       <div className="buttonBlock">
@@ -65,6 +121,7 @@ export class CountdownClock extends Component {
           ended: this.getCurrentTime(),
         },
       ];
+      this.sendEndSig();
       return {
         history,
       };

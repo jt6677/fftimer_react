@@ -12,7 +12,6 @@
     justify-items: center;
     align-items: center;
     font-family: 'Roboto Slab', serif;
-    height: 100%;
 }
 
 .buttonList {
@@ -89,14 +88,15 @@
 }
 
 
-
 .icon {
-    display: inline;
-    fill: #fff;
+    display: inline-block;
+    /* fill: #fff; */
     height: 1.5rem;
-    /* width: 2rem; */
+    width: 2rem;
     vertical-align: middle;
 }
+
+
 
 .errorMSG {
 
@@ -105,10 +105,18 @@
     color: red;
 }
 
+/* 
 .fields {
     display: flex;
     margin-bottom: 0.5rem;
+    height: 3rem;
 
+    text-align: center;
+} */
+
+.fields {
+    display: flex;
+    margin-bottom: 1rem;
 }
 
 form input[type="date"] {
@@ -129,6 +137,7 @@ form input[type="submit"] {
     font: inherit;
     /* padding: 1rem; */
     width: 100%;
+    height: 3.4rem;
 }
 
 form input[type="date"],
@@ -165,14 +174,20 @@ form input[type="submit"]:active {
     background: #c0180c;
 }
 
+/* form label {
+    background-color: #363b41;
+    border-radius: 4px 0 0 4px;
+    padding: 1rem;
+
+    width: 3rem
+} */
+
+
 form label {
     background-color: #363b41;
     border-radius: 4px 0 0 4px;
-    /* padding: 1rem; */
+    padding: 1rem;
 }
-
-
-
 
 /* 
 h1,
@@ -180,13 +195,11 @@ p {
     margin-bottom: 1rem;
     margin-top: 1rem;
 }
-
 h1 {
     font-size: 2.5rem;
     font-weight: 700;
     letter-spacing: 0.125rem;
 }
-
 p {
     font-size: 1rem;
     font-weight: 400;

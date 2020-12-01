@@ -16,7 +16,6 @@ type Users struct {
 
 func NewUsers(us models.UserService) *Users {
 	return &Users{
-
 		us: us,
 	}
 }
@@ -30,10 +29,8 @@ type SigninJSON struct {
 	Name     string `json:"username"`
 	Password string `json:"password"`
 }
-
-type ResponseJSON struct {
-	Token    string `json:"token"`
-	ErrorMSG string `json:"errormsg"`
+type SS struct {
+	SS1 string `json:"ss"`
 }
 
 func (u *Users) SignUp(w http.ResponseWriter, r *http.Request) {
@@ -41,11 +38,7 @@ func (u *Users) SignUp(w http.ResponseWriter, r *http.Request) {
 	var signupJson SignupJSON
 	if err := json.NewDecoder(r.Body).Decode(&signupJson); err != nil {
 		log.Println(err)
-		resp := &ResponseJSON{Token: "", ErrorMSG: "Failed to Decode SignupJson"}
-		err = json.NewEncoder(w).Encode(resp)
-		if err != nil {
-			log.Println(err)
-		}
+		respondJSON("", fmt.Sprint(err), w)
 	}
 	newuser := models.User{
 		Name:      signupJson.Name,
@@ -74,11 +67,7 @@ func (u *Users) Login(w http.ResponseWriter, r *http.Request) {
 	signinJSON := SigninJSON{}
 	if err := json.NewDecoder(r.Body).Decode(&signinJSON); err != nil {
 		log.Println(err)
-		resp := &ResponseJSON{Token: "", ErrorMSG: fmt.Sprint(err)}
-		err = json.NewEncoder(w).Encode(resp)
-		if err != nil {
-			log.Println(err)
-		}
+		respondJSON("", fmt.Sprint(err), w)
 	}
 
 	founduser, err := u.us.Authenticate(signinJSON.Name, signinJSON.Password)
@@ -91,21 +80,14 @@ func (u *Users) Login(w http.ResponseWriter, r *http.Request) {
 
 }
 func (u *Users) Cookie(w http.ResponseWriter, r *http.Request) {
-	cookie, err := r.Cookie("remember_token")
-	if err != nil {
-		log.Println(err)
-		return
-	}
-	fmt.Print(cookie)
-	respondJSON("Cookie is set", "", w)
-}
 
-func respondJSON(token string, errorMSG string, w http.ResponseWriter) {
-	resp := &ResponseJSON{Token: token, ErrorMSG: errorMSG}
-	err := json.NewEncoder(w).Encode(resp)
-	if err != nil {
+	var ss SS
+	if err := json.NewDecoder(r.Body).Decode(&ss); err != nil {
 		log.Println(err)
 	}
+	fmt.Println("ss", ss)
+
+	json.NewEncoder(w).Encode("aa")
 }
 
 // signIn is used to sign the given user by giving a Token

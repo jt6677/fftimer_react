@@ -1,4 +1,5 @@
 import React from "react";
+// import "./SVGIcon.css";
 const getPath = (props) => {
   switch (props) {
     case "user":
@@ -19,6 +20,7 @@ const SVGIcon = (props) => {
       fill="none"
       viewBox="0 0 32 32"
       stroke="currentColor"
+      className="icon"
     >
       <path
         strokeLinecap="round"

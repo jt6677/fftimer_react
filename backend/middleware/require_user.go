@@ -22,11 +22,13 @@ func (mw *User) ApplyFn(next http.HandlerFunc) http.HandlerFunc {
 			next(w, r)
 			return
 		}
+
 		user, err := mw.UserService.ByRemember(cookie.Value)
 		if err != nil {
 			next(w, r)
 			return
 		}
+
 		ctx := r.Context()
 		ctx = context.WithUser(ctx, user)
 		r = r.WithContext(ctx)

@@ -6,10 +6,9 @@ import (
 )
 
 type Services struct {
-	Timeblock TimeblockService
-	User      UserService
-	Date      DateService
-	db        *gorm.DB
+	Session SessionService
+	User    UserService
+	db      *gorm.DB
 }
 
 type ServicesConfig func(*Services) error
@@ -42,15 +41,9 @@ func WithUser(pwPepper, hmackey string) ServicesConfig {
 	}
 }
 
-func WithTimeblock() ServicesConfig {
+func WithSession() ServicesConfig {
 	return func(s *Services) error {
-		s.Timeblock = NewTimeTimeblockService(s.db)
-		return nil
-	}
-}
-func WithDate() ServicesConfig {
-	return func(s *Services) error {
-		s.Date = NewDateSerivce(s.db)
+		s.Session = NewSessionService(s.db)
 		return nil
 	}
 }
@@ -72,7 +65,7 @@ func (s *Services) Close() error {
 
 // DestructiveReset drops all tables and rebuilds them
 func (s *Services) DestructiveReset() error {
-	err := s.db.DropTableIfExists(&User{}, &Timeblock{}, &Date{}).Error
+	err := s.db.DropTableIfExists(&User{}, &Session{}).Error
 	if err != nil {
 		return err
 	}
@@ -81,5 +74,5 @@ func (s *Services) DestructiveReset() error {
 
 // AutoMigrate will attempt to automatically migrate all tables
 func (s *Services) AutoMigrate() error {
-	return s.db.AutoMigrate(&User{}, &Timeblock{}, &Date{}).Error
+	return s.db.AutoMigrate(&User{}, &Session{}).Error
 }

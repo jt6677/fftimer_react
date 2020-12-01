@@ -57,7 +57,7 @@ export class Signup extends Component {
               <Field
                 type="text"
                 name="username"
-                placeholder="Username"
+                placeholder=" Username"
                 component={this.renderInput}
                 validate={[required, minLength4]}
                 label="user"
@@ -66,7 +66,7 @@ export class Signup extends Component {
               <Field
                 type="text"
                 name="cellphone"
-                placeholder="Cellphone"
+                placeholder=" Cellphone"
                 component={this.renderInput}
                 validate={[required, minLength11]}
                 label="mobile"
@@ -75,7 +75,7 @@ export class Signup extends Component {
               <Field
                 type="password"
                 name="password"
-                placeholder="Password"
+                placeholder=" Password"
                 component={this.renderInput}
                 validate={[required, minLength6]}
                 label="password"
