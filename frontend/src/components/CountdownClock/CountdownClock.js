@@ -4,6 +4,7 @@ import soundfile from "../../assets/welldone.mp3";
 import SessionTable from "../SessionTable/SessionTable.js";
 import requireAuth from "../Auth/requireAuth";
 import server from "../../apis/server";
+import moment from "moment";
 let basetime = 1;
 export class CountdownClock extends Component {
   state = {
@@ -17,22 +18,7 @@ export class CountdownClock extends Component {
   };
   //make a Audio objects
   audio = new Audio(soundfile);
-  //addZero and getTime return 01:05:58
-  addZero = (i) => {
-    if (i < 10) {
-      i = "0" + i;
-    }
-    return i;
-  };
-  // sendCookie = async () => {
-  //   let ss = "ss";
-  //   try {
-  //     const resp = server.post("/cookie", { withCredentials: true, ss });
 
-  //     console.log(resp.data);
-  //   } catch (err) {
-  //     console.log(err);
-  //   }
   sendEndSig = async () => {
     let config = {
       url: "/recordsession",
@@ -45,40 +31,11 @@ export class CountdownClock extends Component {
 
     try {
       const resp = server.request(config);
-
-      console.log(resp.data);
     } catch (err) {
       console.log(err);
     }
   };
 
-  //   axios("http://mysite.com/api/things/", {
-  //   method: "post",
-  //   data: someJsonData,
-  //   withCredentials: true
-  // })
-  // sendEndSig = async () => {
-  //   let startedat = this.state.sessionStarted;
-  //   try {
-  //     const resp = await server.post(
-  //       "/recordsession",
-
-  //       { withCredentials: true }
-  //     );
-  //     console.log(resp.data);
-  //   } catch (err) {
-  //     console.log(err);
-  //   }
-  // };
-  // sendCookie = async () => {
-  //   try {
-  //     const resp = server.get("/cookie", { withCredentials: true });
-
-  //     console.log(resp.data);
-  //   } catch (err) {
-  //     console.log(err);
-  //   }
-  // };
   renderButtons() {
     return (
       <div className="buttonBlock">
@@ -103,11 +60,7 @@ export class CountdownClock extends Component {
 
   getCurrentTime() {
     let d = new Date();
-
-    let h = this.addZero(d.getHours());
-    let m = this.addZero(d.getMinutes());
-    let s = this.addZero(d.getSeconds());
-    let x = h + ":" + m + ":" + s;
+    let x = moment(d).format("YYYY-MM-DD HH:mm:ss");
     return x;
   }
 
@@ -116,9 +69,9 @@ export class CountdownClock extends Component {
       const history = [
         ...state.history,
         {
-          id: state.history.length + 1,
-          started: this.state.sessionStarted,
-          ended: this.getCurrentTime(),
+          ID: state.history.length + 1,
+          StartedAt: this.state.sessionStarted,
+          UpdatedAt: this.getCurrentTime(),
         },
       ];
       this.sendEndSig();
@@ -212,12 +165,6 @@ export class CountdownClock extends Component {
           </div>
         </div>
 
-        {/* <Button
-          timerStart={this.timerStart}
-          counting={this.state.counting}
-          startButton="Start"
-          pauseButton="Pause"
-        /> */}
         {this.renderButtons()}
         <SessionTable history={this.state.history} />
       </div>

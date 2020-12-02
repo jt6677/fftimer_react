@@ -1,51 +1,72 @@
 import React, { Component } from "react";
+import { connect } from "react-redux";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import SVGIcon from "../SVGIcon/SVGIcon";
 import "../Auth/Signin";
-import ReduxForm from "../ReduxForm/ReduxForm.js";
+import { checkDailySession } from "../../actions";
+import moment from "moment";
 import Fallfowardpage from "../FallFowardPage/fallfowardpage";
 import requireAuth from "../Auth/requireAuth";
-import server from "../../apis/server";
+
+import { Link } from "react-router-dom";
 
 export class DatePick extends Component {
-  onSubmit(formValues) {
-    // console.log(formValues);
-    // // let bbb = formValues;
-    // const signUp = async () => {
-    //   const response = await server.post("/signup", formValues);
-    //   console.log(response.data);
-    // };
-    // signUp();
-    console.log(formValues);
-  }
-
-  dateDefault() {
-    let date = new Date();
-
-    let day = date.getDate();
-    let month = date.getMonth() + 1;
-    let year = date.getFullYear();
-
-    if (month < 10) month = "0" + month;
-    if (day < 10) day = "0" + day;
-
-    let today = year + "-" + month + "-" + day;
-
-    return `${today}`;
-  }
+  state = {
+    selecteddate: new Date(),
+  };
+  handleSubmit = (evt) => {
+    evt.preventDefault();
+    let x = moment(this.state.selecteddate).format("YYYYMMDD");
+    console.log(x);
+    this.props.checkDailySession(x);
+  };
+  handleChange = (date) => {
+    this.setState({
+      selecteddate: date,
+    });
+  };
 
   render() {
     return (
       <div className="main-body">
         <Fallfowardpage showWisdom={true} />
-        <div>
-          <ReduxForm
-            initialValues={{ date: this.dateDefault() }}
-            onSubmit={this.onSubmit}
-            displayFormat="YYYYMMDD"
+        <form className=" signin-container" onSubmit={this.handleSubmit}>
+          <label htmlFor="name">
+            <SVGIcon className="icon" iconName="calendar" />
+          </label>
+          <DatePicker
+            className="datepicker"
+            selected={this.state.selecteddate}
+            onChange={(e) => this.handleChange(e)}
+            dateFormat="yyyyMMdd"
+            isClearable
           />
-        </div>
+          <div className="buttonList">
+            <span className="errorMSG">{this.props.errorMSG}</span>
+            <ul className="buttons">
+              <li>
+                <input
+                  type="submit"
+                  value="Go"
+                  className="primary signinbutton"
+                />
+              </li>
+              <li>
+                <Link to="/signinandsignup" className="minor">
+                  &#10229; Go back
+                </Link>
+              </li>
+            </ul>
+          </div>
+        </form>
       </div>
     );
   }
 }
+const mapDispatchToProps = { checkDailySession };
 
-export default requireAuth(DatePick);
+const mapStateToProps = (state) => ({ errorMSG: state.getSession.errorMSG });
+export default requireAuth(
+  connect(mapStateToProps, mapDispatchToProps)(DatePick)
+);

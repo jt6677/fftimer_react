@@ -22,7 +22,7 @@ export class Navbar extends Component {
           <Link className="link text-link" to="/">
             Timer
           </Link>
-          <Link className="link text-link" to="/datepick">
+          <Link className="link text-link" to="/datepicker">
             Date-pick
           </Link>
           <Link className="link text-link " to="/signout">

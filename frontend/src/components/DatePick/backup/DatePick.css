@@ -12,8 +12,8 @@
     justify-items: center;
     align-items: center;
     font-family: 'Roboto Slab', serif;
+    height: 100%;
 }
-
 
 .buttonList {
     margin-top: 0.5rem
@@ -89,21 +89,26 @@
 }
 
 
+
 .icon {
-    display: inline-block;
-    /* fill: #fff; */
+    display: inline;
+    fill: #fff;
     height: 1.5rem;
-    width: 2rem;
+    /* width: 2rem; */
     vertical-align: middle;
 }
 
 .errorMSG {
+
+    padding: 0;
+    margin: 0;
     color: red;
 }
 
 .fields {
     display: flex;
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem;
+
 }
 
 form input[type="date"] {
@@ -122,14 +127,8 @@ form input[type="submit"] {
     border-radius: 4px;
     color: #fff;
     font: inherit;
-    margin: 0;
+    /* padding: 1rem; */
     width: 100%;
-
-}
-
-.datepicker {
-    padding: 0;
-    height: 3.31rem
 }
 
 form input[type="date"],
@@ -137,7 +136,6 @@ form input[type="password"],
 form input[type="text"] {
     background-color: #3b4148;
     border-radius: 0 4px 4px 0;
-
 }
 
 form input[type="date"]:focus,
@@ -167,9 +165,27 @@ form input[type="submit"]:active {
     background: #c0180c;
 }
 
-
 form label {
     background-color: #363b41;
     border-radius: 4px 0 0 4px;
-    padding: 1rem;
+    /* padding: 1rem; */
 }
+
+
+
+
+/* 
+h1,
+p {
+    margin-bottom: 1rem;
+    margin-top: 1rem;
+}
+h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    letter-spacing: 0.125rem;
+}
+p {
+    font-size: 1rem;
+    font-weight: 400;
+} */

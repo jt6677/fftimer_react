@@ -5,7 +5,9 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"time"
 
+	"github.com/gorilla/mux"
 	"github.com/jt6677/ffdtimer/context"
 	"github.com/jt6677/ffdtimer/models"
 )
@@ -19,6 +21,10 @@ func NewSessions(ss models.SessionService, us models.UserService) *Sessions {
 
 var sCount int
 
+type GetSessions struct {
+	SessionCount string `json:"sessioncount"`
+	Sessions
+}
 type Sessions struct {
 	ss models.SessionService
 	us models.UserService
@@ -39,19 +45,7 @@ func (s *Sessions) RecordSession(w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 		return
 	}
-	// cookie, err := r.Cookie("remember_token")
-	// if err != nil {
-	// 	respondJSON("", fmt.Sprint(err), w)
-	// 	log.Println(err)
-	// 	return
-	// }
 
-	// user, err := s.us.ByRemember(cookie.Value)
-	// if err != nil {
-	// 	log.Println(err)
-	// 	respondJSON("", fmt.Sprint(err), w)
-	// 	return
-	// }
 	user := context.User(r.Context())
 	fmt.Println("user name:", user.Name)
 	session := &models.Session{
@@ -69,68 +63,57 @@ func (s *Sessions) RecordSession(w http.ResponseWriter, r *http.Request) {
 	respondJSON("Successfully Recorded currentSession", "", w)
 
 }
+func (s *Sessions) Show(w http.ResponseWriter, r *http.Request) {
 
-// func (s *Sessions) Show(w http.ResponseWriter, r *http.Request) {
-// 	//check UserID and DateID
-// 	timeblocks, count, err := s.dateByDateIDandUserID(r)
-// 	if err != nil {
-// 		switch err {
-// 		case models.ErrNotFound:
-// 			http.Error(w, "Not DateID Exisits", http.StatusNotFound)
-// 		default:
-// 			http.Error(w, "Whoops! Something went wrong.", http.StatusInternalServerError)
-// 		}
-// 	}
+	getsessions, count, err := s.dateByDateIDandUserID(r)
+	if err != nil {
+		switch err {
+		case models.ErrNotFound:
+			respondJSON("", fmt.Sprint(err), w)
+			return
+		default:
+			respondJSON("", "Whoops! Something went wrong.", w)
+			return
+		}
+	}
+	type SessionInfo struct {
+		sessionid  string
+		startedat  time.Time
+		finishedat time.Time
+	}
+	sessionsInfos := make([]SessionInfo, count)
+	for i, session := range getsessions {
+		sessionsInfos[i] = SessionInfo{
+			sessionid:  session.DateID,
+			startedat:  session.CreatedAt,
+			finishedat: session.UpdatedAt,
+		}
+	}
+	type ReturnSessionQuery struct {
+		Count    int64
+		Sessions []SessionInfo
+	}
+	// t := &ReturnSessionQuery{
+	// 	Count:    count,
+	// 	Sessions: sessionsInfos,
+	// }
+	err = json.NewEncoder(w).Encode(getsessions)
+	if err != nil {
+		log.Println(err)
+	}
 
-// 	var vd views.Data
-// 	if count > 0 {
-// 		type Dateinfo struct {
-// 			Dateid string
-// 			Timed  time.Duration
-// 			Status bool
-// 		}
+}
 
-// 		// var durations []dateduration
-// 		D := make([]Dateinfo, count)
+func (s *Sessions) dateByDateIDandUserID(r *http.Request) ([]models.Session, int64, error) {
+	vars := mux.Vars(r)
+	idStr := vars["id"]
+	// fmt.Println(idStr)
+	user := context.User(r.Context())
 
-// 		for i, ti := range timeblocks {
-// 			start := ti.CreatedAt
-// 			end := ti.UpdatedAt
-// 			t := -start.Sub(end).Truncate(time.Second)
-// 			// 	1h11m15.539182s
-// 			D[i] = Dateinfo{
-// 				Dateid: ti.DateID,
-// 				Timed:  t,
-// 				Status: ti.Finished,
-// 			}
-// 		}
-// 		type TimeblockTable struct {
-// 			Count     int64
-// 			Dateinfos []Dateinfo
-// 		}
-// 		T := &TimeblockTable{
-// 			Count:     count,
-// 			Dateinfos: D,
-// 		}
-// 		// fmt.Println(len(timeblocks))
-// 		vd.Yield = T
-// 	} else {
-// 		vd.Yield = nil
-// 	}
+	sessions, count, err := s.ss.ByDateIDandUserID(uint(user.ID), idStr)
+	if err != nil {
+		return nil, 0, err
+	}
 
-// 	t.ShowView.Render(w, r, vd)
-// }
-
-// func (s *Sessions) dateByDateIDandUserID(r *http.Request) ([]models.Session, int64, error) {
-// 	vars := mux.Vars(r)
-// 	idStr := vars["id"]
-// 	// fmt.Println(idStr)
-// 	user := context.User(r.Context())
-
-// 	date, count, err := t.ts.ByDateIDandUserID(uint(user.ID), idStr)
-// 	if err != nil {
-// 		return nil, 0, err
-// 	}
-
-// 	return date, count, nil
-// }
+	return sessions, count, nil
+}

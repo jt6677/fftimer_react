@@ -29,9 +29,6 @@ type SigninJSON struct {
 	Name     string `json:"username"`
 	Password string `json:"password"`
 }
-type SS struct {
-	SS1 string `json:"ss"`
-}
 
 func (u *Users) SignUp(w http.ResponseWriter, r *http.Request) {
 
@@ -79,16 +76,17 @@ func (u *Users) Login(w http.ResponseWriter, r *http.Request) {
 	u.signIn(w, founduser)
 
 }
-func (u *Users) Cookie(w http.ResponseWriter, r *http.Request) {
 
-	var ss SS
-	if err := json.NewDecoder(r.Body).Decode(&ss); err != nil {
-		log.Println(err)
-	}
-	fmt.Println("ss", ss)
+// func (u *Users) Cookie(w http.ResponseWriter, r *http.Request) {
 
-	json.NewEncoder(w).Encode("aa")
-}
+// 	var ss SS
+// 	if err := json.NewDecoder(r.Body).Decode(&ss); err != nil {
+// 		log.Println(err)
+// 	}
+// 	fmt.Println("ss", ss)
+
+// 	json.NewEncoder(w).Encode("aa")
+// }
 
 // signIn is used to sign the given user by giving a Token
 func (u *Users) signIn(w http.ResponseWriter, user *models.User) {

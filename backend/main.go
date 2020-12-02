@@ -46,21 +46,22 @@ func main() {
 	r.Handle("/favicon.ico", http.NotFoundHandler())
 
 	r.HandleFunc("/recordsession", requireUserMw.ApplyFn(timeblockC.RecordSession)).Methods("POST")
-	// r.HandleFunc("/recordsession", timeblockC.RecordSession).Methods("POST")
 
 	r.HandleFunc("/signup", userC.SignUp).Methods("POST")
 	r.HandleFunc("/signin", userC.Login).Methods("POST")
-	r.HandleFunc("/cookie", userC.Cookie).Methods("POST")
-	// r.HandleFunc("/datepage/{id:[0-9]+}", requireUserMw.ApplyFn(timeblockC.Show)).Methods("GET").Name("showDate")
+	// r.HandleFunc("/cookie", userC.Cookie).Methods("POST")
+	r.HandleFunc("/dailysession/{id:[0-9]+}", requireUserMw.ApplyFn(timeblockC.Show)).Methods("GET")
 	fmt.Printf("Listen%v, System is all GO!\n", cfg.Port)
 
 	c := cors.New(cors.Options{
-		AllowedOrigins:   []string{"http://localhost:3000"},
+		AllowedOrigins:   []string{"http://localhost:3001"},
 		AllowCredentials: true,
 	})
-	handler := c.Handler(r)
-	http.ListenAndServe(cfg.Port, userMw.Apply(handler))
+	handler := c.Handler(userMw.Apply(r))
+	http.ListenAndServe(cfg.Port, handler)
+	// handler := c.Handler(userMw.Apply(r))
 	// http.ListenAndServe(cfg.Port, handler)
+
 }
 
 func must(err error) {

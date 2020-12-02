@@ -7,8 +7,8 @@ import SigninSignup from "./Auth/SigninSignup";
 import Signin from "./Auth/Signin";
 import Signup from "./Auth/Signup";
 import Signout from "./Auth/Signout";
-import DatePick from "./DatePick/DatePick";
-import DateShow from "./DateShow/DateShow";
+import DatePick from "./DatePick/DatePick.js";
+import SessionShow from "./SessionShow/SessionShow";
 import history from "../history";
 
 export class App extends Component {
@@ -24,8 +24,8 @@ export class App extends Component {
             <Route path="/signin" exact component={Signin} />
             <Route path="/signup" exact component={Signup} />
             <Route path="/signout" exact component={Signout} />
-            <Route path="/datepick" exact component={DatePick} />
-            <Route path="/datepick/:id" exact component={DateShow} />
+            <Route path="/date/:id" exact component={SessionShow} />
+            <Route path="/datepicker" exact component={DatePick} />
           </Switch>
         </Router>
       </div>
