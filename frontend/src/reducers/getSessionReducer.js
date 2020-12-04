@@ -5,7 +5,7 @@ const initialState = {
   errorMSG: "",
 };
 
-export default (state = initialState, action) => {
+export default function getSessionReducer(state = initialState, action) {
   switch (action.type) {
     case GET_DAILYSESSION:
       return { sessions: action.payload };
@@ -14,4 +14,4 @@ export default (state = initialState, action) => {
     default:
       return state;
   }
-};
+}

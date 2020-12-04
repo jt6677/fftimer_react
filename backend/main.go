@@ -54,7 +54,7 @@ func main() {
 	fmt.Printf("Listen%v, System is all GO!\n", cfg.Port)
 
 	c := cors.New(cors.Options{
-		AllowedOrigins:   []string{"http://localhost:3001"},
+		AllowedOrigins:   []string{"http://localhost:3000"},
 		AllowCredentials: true,
 	})
 	handler := c.Handler(userMw.Apply(r))

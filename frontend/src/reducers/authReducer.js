@@ -5,7 +5,7 @@ const initialState = {
   errorMessage: "",
 };
 
-export default (state = initialState, { type, payload }) => {
+export default function authReducer(state = initialState, { type, payload }) {
   switch (type) {
     case AUTH_USER:
       return { ...state, authenticated: payload };
@@ -14,4 +14,4 @@ export default (state = initialState, { type, payload }) => {
     default:
       return state;
   }
-};
+}

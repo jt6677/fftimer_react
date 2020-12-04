@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import history from "../../history";
-export default (ChildComponent) => {
+export default function requireAuth(ChildComponent) {
   class ComposedComponent extends Component {
     // Our component just got rendered
     componentDidMount() {
@@ -29,4 +29,4 @@ export default (ChildComponent) => {
   }
 
   return connect(mapStateToProps)(ComposedComponent);
-};
+}

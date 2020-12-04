@@ -5,10 +5,11 @@ import SessionTable from "../SessionTable/SessionTable.js";
 import requireAuth from "../Auth/requireAuth";
 import server from "../../apis/server";
 import moment from "moment";
-let basetime = 1;
+
+var basetime = 5;
 export class CountdownClock extends Component {
   state = {
-    timeRemain: basetime,
+    timeRemain: "",
     currentSessionID: null,
     minutes: "",
     seconds: "",
@@ -30,7 +31,7 @@ export class CountdownClock extends Component {
     };
 
     try {
-      const resp = server.request(config);
+      server.request(config);
     } catch (err) {
       console.log(err);
     }
@@ -65,21 +66,20 @@ export class CountdownClock extends Component {
   }
 
   onAddSession = () => {
-    this.setState((state) => {
-      const history = [
-        ...state.history,
-        {
-          ID: state.history.length + 1,
-          StartedAt: this.state.sessionStarted,
-          UpdatedAt: this.getCurrentTime(),
-        },
-      ];
-      this.sendEndSig();
-      return {
-        history,
-      };
-    });
+    const finishedSession = {
+      ID: this.state.history.length + 1,
+      StartedAt: this.state.sessionStarted,
+      UpdatedAt: this.getCurrentTime(),
+    };
+
+    this.setState((previousState) => ({
+      history: [...previousState.history, finishedSession],
+    }));
+
+    this.sendEndSig();
+    localStorage.setItem("sessionhistory", JSON.stringify(this.state.history));
   };
+
   timerStart = () => {
     this.setState({
       counting: true,
@@ -87,16 +87,12 @@ export class CountdownClock extends Component {
     });
 
     const x = setInterval(() => {
-      // console.log(x);
-      // if (this.state.counting === false) {
-      //   clearInterval(x);
-      // }
-      if (this.state.timeRemain !== 0) {
+      if (this.state.timeRemain > 0) {
         this.setState((prevState) => {
           return { timeRemain: prevState.timeRemain - 1 };
         });
+        this.changeMinSec(this.state.timeRemain);
         localStorage.setItem("timeRemain", this.state.timeRemain);
-        this.countDown();
       } else {
         this.audio.play();
         localStorage.removeItem("timeRemain");
@@ -105,6 +101,7 @@ export class CountdownClock extends Component {
           counting: false,
         });
         this.onAddSession();
+
         clearInterval(x);
       }
     }, 1000);
@@ -118,9 +115,9 @@ export class CountdownClock extends Component {
       counting: false,
     });
   }
-  countDown = () => {
-    let minutes = parseInt(this.state.timeRemain / 60, 10);
-    let seconds = parseInt(this.state.timeRemain % 60, 10);
+  changeMinSec = (x) => {
+    let minutes = parseInt(x / 60, 10);
+    let seconds = parseInt(x % 60, 10);
     minutes = minutes < 10 ? "0" + minutes : minutes;
     seconds = seconds < 10 ? "0" + seconds : seconds;
     this.setState({
@@ -129,24 +126,26 @@ export class CountdownClock extends Component {
     });
   };
   componentDidMount() {
-    const t = localStorage.getItem("timeRemain");
-    if (t !== null) {
-      this.setState({
-        timeRemain: t,
-      });
-      let minutes = parseInt(t / 60, 10);
-      let seconds = parseInt(t % 60, 10);
-      minutes = minutes < 10 ? "0" + minutes : minutes;
-      seconds = seconds < 10 ? "0" + seconds : seconds;
-      this.setState({
-        minutes: minutes,
-        seconds: seconds,
-      });
+    if (localStorage.hasOwnProperty("timeRemain") === true) {
+      this.setState(
+        {
+          timeRemain: localStorage.getItem("timeRemain"),
+        },
+        () => this.changeMinSec(this.state.timeRemain)
+      );
     } else {
+      this.setState(
+        {
+          timeRemain: basetime,
+        },
+        () => this.changeMinSec(this.state.timeRemain)
+      );
+    }
+
+    if (localStorage.getItem("sessionhistory") !== null) {
       this.setState({
-        timeRemain: basetime,
+        history: JSON.parse(localStorage.getItem("sessionhistory")),
       });
-      this.countDown();
     }
   }
   render() {

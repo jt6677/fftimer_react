@@ -2,17 +2,15 @@ import React from "react";
 import "./SessionTable.css";
 import moment from "moment";
 function SessionTable({ history }) {
-  const historyMap = history.map((session) => {
-    return (
-      <tr className="sessiontable__tr__content" key={session.ID}>
-        <td className="cell">{session.ID}</td>
-        <td className="cell">{session.StartedAt}</td>
-        <td className="cell">
-          {moment(session.UpdatedAt).format("YYYY-MM-DD HH:mm:ss")}
-        </td>
-      </tr>
-    );
-  });
+  const historyMap = history.map((session) => (
+    <tr className="sessiontable__tr__content" key={session.ID}>
+      <td className="cell">{session.ID}</td>
+      <td className="cell">{session.StartedAt}</td>
+      <td className="cell">
+        {moment(session.UpdatedAt).format("YYYY-MM-DD HH:mm:ss")}
+      </td>
+    </tr>
+  ));
 
   if (history.length > 0) {
     return (

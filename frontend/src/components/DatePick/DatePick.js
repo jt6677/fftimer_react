@@ -18,7 +18,6 @@ export class DatePick extends Component {
   handleSubmit = (evt) => {
     evt.preventDefault();
     let x = moment(this.state.selecteddate).format("YYYYMMDD");
-    console.log(x);
     this.props.checkDailySession(x);
   };
   handleChange = (date) => {

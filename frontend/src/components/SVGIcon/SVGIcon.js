@@ -10,6 +10,8 @@ const getPath = (props) => {
       return "M21 2 L11 2 C10 2 9 3 9 4 L9 28 C9 29 10 30 11 30 L21 30 C22 30 23 29 23 28 L23 4 C23 3 22 2 21 2 Z M9 5 L23 5 M9 27 L23 27";
     case "calendar":
       return "M2 6 L2 30 30 30 30 6 Z M2 15 L30 15 M7 3 L7 9 M13 3 L13 9 M19 3 L19 9 M25 3 L25 9";
+    default:
+      return "";
   }
 };
 const SVGIcon = (props) => {
