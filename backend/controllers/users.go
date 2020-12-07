@@ -22,8 +22,8 @@ func NewUsers(us models.UserService) *Users {
 
 type SignupJSON struct {
 	Name      string `json:"username"`
-	Cellphone string `json:"cellphone"`
 	Password  string `json:"password"`
+	Cellphone string `json:"cellphone"`
 }
 type SigninJSON struct {
 	Name     string `json:"username"`
@@ -31,16 +31,21 @@ type SigninJSON struct {
 }
 
 func (u *Users) SignUp(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
 
-	var signupJson SignupJSON
-	if err := json.NewDecoder(r.Body).Decode(&signupJson); err != nil {
+	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS,PUT")
+	w.Header().Set("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization")
+	w.Header().Set("Access-Control-Allow-Credentials", "true")
+	var signupForm SignupJSON
+	if err := json.NewDecoder(r.Body).Decode(&signupForm); err != nil {
 		log.Println(err)
 		respondJSON("", fmt.Sprint(err), w)
 	}
+	fmt.Println(signupForm)
 	newuser := models.User{
-		Name:      signupJson.Name,
-		Password:  signupJson.Password,
-		Cellphone: signupJson.Cellphone,
+		Name:      signupForm.Name,
+		Password:  signupForm.Password,
+		Cellphone: signupForm.Cellphone,
 	}
 	if err := u.us.Create(&newuser); err != nil {
 		log.Println(err)
@@ -50,7 +55,7 @@ func (u *Users) SignUp(w http.ResponseWriter, r *http.Request) {
 	}
 	//SignIn func which needs to return a Token
 	fmt.Println("About to Sigup User")
-	founduser, err := u.us.Authenticate(signupJson.Name, signupJson.Password)
+	founduser, err := u.us.Authenticate(signupForm.Name, signupForm.Password)
 	if err != nil {
 		log.Println(err)
 		respondJSON("", fmt.Sprint(err), w)
@@ -60,13 +65,15 @@ func (u *Users) SignUp(w http.ResponseWriter, r *http.Request) {
 }
 
 func (u *Users) Login(w http.ResponseWriter, r *http.Request) {
-
+	// w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
+	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
 	signinJSON := SigninJSON{}
 	if err := json.NewDecoder(r.Body).Decode(&signinJSON); err != nil {
-		log.Println(err)
+		log.Println("JSON:", err)
 		respondJSON("", fmt.Sprint(err), w)
 	}
-
+	fmt.Println("name:", signinJSON.Name)
+	fmt.Println(signinJSON.Password)
 	founduser, err := u.us.Authenticate(signinJSON.Name, signinJSON.Password)
 	if err != nil {
 		log.Println(err)
@@ -90,6 +97,10 @@ func (u *Users) Login(w http.ResponseWriter, r *http.Request) {
 
 // signIn is used to sign the given user by giving a Token
 func (u *Users) signIn(w http.ResponseWriter, user *models.User) {
+	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
+	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS,PUT")
+	w.Header().Set("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization")
+	w.Header().Set("Access-Control-Allow-Credentials", "true")
 	if user.Remember == "" {
 		token, err := rand.RememberToken()
 		if err != nil {
@@ -101,6 +112,7 @@ func (u *Users) signIn(w http.ResponseWriter, user *models.User) {
 			return
 		}
 	}
+
 	respondJSON(user.Remember, "", w)
 }
 

@@ -3,7 +3,7 @@ module github.com/jt6677/ffdtimer
 go 1.14
 
 require (
-	github.com/gorilla/handlers v1.5.1 // indirect
+	github.com/gorilla/handlers v1.5.1
 	github.com/gorilla/mux v1.8.0
 	github.com/gorilla/schema v1.2.0
 	github.com/hashicorp/go-hclog v0.15.0 // indirect

@@ -3,8 +3,9 @@ import "./CountdownClock.css";
 import soundfile from "../../assets/welldone.mp3";
 import SessionTable from "../SessionTable/SessionTable.js";
 import requireAuth from "../Auth/requireAuth";
-import server from "../../apis/server";
 import moment from "moment";
+import { sendEndSig } from "../../actions";
+import { connect } from "react-redux";
 
 var basetime = 5;
 export class CountdownClock extends Component {
@@ -20,22 +21,26 @@ export class CountdownClock extends Component {
   //make a Audio objects
   audio = new Audio(soundfile);
 
-  sendEndSig = async () => {
-    let config = {
-      url: "/recordsession",
-      method: "post",
-      withCredentials: true,
-      data: {
-        startedat: this.state.sessionStarted,
-      },
-    };
+  // sendEndSig = async () => {
+  //   let config = {
+  //     url: "/recordsession",
+  //     method: "post",
+  //     withCredentials: true,
+  //     data: {
+  //       startedat: this.state.sessionStarted,
+  //     },
+  //     headers: {
+  //       "Access-Control-Allow-Origin": "https://jt6677.github.io/",
+  //       "Access-Control-Allow-Credentials": "true",
+  //     },
+  //   };
 
-    try {
-      server.request(config);
-    } catch (err) {
-      console.log(err);
-    }
-  };
+  //   try {
+  //     server.request(config);
+  //   } catch (err) {
+  //     console.log(err);
+  //   }
+  // };
 
   renderButtons() {
     return (
@@ -76,7 +81,7 @@ export class CountdownClock extends Component {
       history: [...previousState.history, finishedSession],
     }));
 
-    this.sendEndSig();
+    this.props.sendEndSig(this.state.sessionStarted);
     localStorage.setItem("sessionhistory", JSON.stringify(this.state.history));
   };
 
@@ -171,4 +176,5 @@ export class CountdownClock extends Component {
   }
 }
 
-export default requireAuth(CountdownClock);
+const mapDispatchToProps = { sendEndSig };
+export default requireAuth(connect(null, mapDispatchToProps)(CountdownClock));
