@@ -19,6 +19,7 @@ type Config struct {
 	TimerDuration int            `json:"timerDuration"`
 	PwPepper      string         `json:"pepper"`
 	HMACkey       string         `json:"hmackey"`
+	JWTkey        string         `json:"jwtkey"`
 	Origin        string         `json:"origin"`
 }
 

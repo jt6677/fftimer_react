@@ -7,7 +7,6 @@ import (
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 	"github.com/jt6677/ffdtimer/hash"
-	"github.com/jt6677/ffdtimer/rand"
 
 	"golang.org/x/crypto/bcrypt"
 )
@@ -17,16 +16,14 @@ type User struct {
 	Name         string `gorm:"not null; unique_index"`
 	Password     string `gorm:"-"`
 	PasswordHash string `gorm:"not null"`
-	Remember     string `gorm:"-"`
-	RememberHash string `gorm:"not null;unique_index"`
-	Cellphone    string `gorm:"not null; unique_index"`
+
+	Cellphone string `gorm:"not null; unique_index"`
 }
 type UserDB interface {
 	// Methods for querying for single users
 	ByID(id uint) (*User, error)
 	ByCellphone(cellphone string) (*User, error)
 	ByName(name string) (*User, error)
-	ByRemember(token string) (*User, error)
 
 	// Methods for altering users
 	Create(user *User) error
@@ -102,14 +99,6 @@ func (ug *userGorm) ByCellphone(cellphone string) (*User, error) {
 	err := first(db, &user)
 	return &user, err
 }
-func (ug *userGorm) ByRemember(rememberHash string) (*User, error) {
-	var user User
-	err := first(ug.db.Where("remember_hash = ?", rememberHash), &user)
-	if err != nil {
-		return nil, err
-	}
-	return &user, nil
-}
 
 func (us *userService) Authenticate(name, password string) (*User, error) {
 
@@ -180,18 +169,6 @@ func runUserValFuncs(user *User, fns ...userValFunc) error {
 // 	return uv.UserDB.ByEmail(user.Email)
 // }
 
-// ByRemember will hash the remember token and then call
-// ByRemember on the subsequent UserDB layer.
-func (uv *userValidator) ByRemember(token string) (*User, error) {
-	user := User{
-		Remember: token,
-	}
-	if err := runUserValFuncs(&user, uv.hmacRemember); err != nil {
-		return nil, err
-	}
-	return uv.UserDB.ByRemember(user.RememberHash)
-}
-
 // Create will create the provided user and backfill data
 // like the ID, CreatedAt, and UpdatedAt fields.
 func (uv *userValidator) Create(user *User) error {
@@ -200,10 +177,7 @@ func (uv *userValidator) Create(user *User) error {
 		uv.passwordMinLength,
 		uv.bcryptPassword,
 		uv.passwordHashRequired,
-		uv.setRememberIfUnset,
-		uv.rememberMinBytes,
-		uv.hmacRemember,
-		uv.rememberHashRequired,
+
 		uv.normalizeName,
 		uv.requireName,
 		uv.nameIsAvail,
@@ -221,9 +195,7 @@ func (uv *userValidator) Update(user *User) error {
 		uv.passwordMinLength,
 		uv.bcryptPassword,
 		uv.passwordHashRequired,
-		uv.rememberMinBytes,
-		uv.hmacRemember,
-		uv.rememberHashRequired,
+
 		uv.normalizeName,
 		uv.requireName,
 		uv.nameIsAvail,
@@ -260,47 +232,6 @@ func (uv *userValidator) bcryptPassword(user *User) error {
 	}
 	user.PasswordHash = string(hashedBytes)
 	user.Password = ""
-	return nil
-}
-
-func (uv *userValidator) hmacRemember(user *User) error {
-	if user.Remember == "" {
-		return nil
-	}
-	user.RememberHash = uv.hmac.Hash(user.Remember)
-	return nil
-}
-
-func (uv *userValidator) setRememberIfUnset(user *User) error {
-	if user.Remember != "" {
-		return nil
-	}
-	token, err := rand.RememberToken()
-	if err != nil {
-		return err
-	}
-	user.Remember = token
-	return nil
-}
-
-func (uv *userValidator) rememberMinBytes(user *User) error {
-	if user.Remember == "" {
-		return nil
-	}
-	n, err := rand.NBytes(user.Remember)
-	if err != nil {
-		return err
-	}
-	if n < 32 {
-		return ErrRememberTooShort
-	}
-	return nil
-}
-
-func (uv *userValidator) rememberHashRequired(user *User) error {
-	if user.RememberHash == "" {
-		return ErrRememberRequired
-	}
 	return nil
 }
 

@@ -12,13 +12,14 @@ type ResponseJSON struct {
 }
 
 func respondJSON(resp string, errorMSG string, w http.ResponseWriter) {
+
 	respmsg := &ResponseJSON{Response: resp, ErrorMSG: errorMSG}
-	// w.Header().Set("Access-Control-Allow-Origin", "https://jt6677.github.io")
-	// w.Header().Set("Access-Control-Allow-Methods", " GET, POST, PUT, PATCH, DELETE, HEAD, OPTIONS")
-	// w.Header().Set("Access-Control-Allow-Headers", "Content-Type,X-PINGOTHER,Authorization")
-	// w.Header().Set("Access-Control-Allow-Credentials", "true")
-	// // w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	// w.Header().Set("Access-Control-Allow-Origin", "https://jt6677.github.io")
+	w.Header().Set("Access-Control-Allow-Origin", "https://1q.gg")
+	w.Header().Set("Access-Control-Allow-Methods", " GET, POST, PUT, PATCH, DELETE, HEAD, OPTIONS")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type,X-PINGOTHER,Authorization")
+	w.Header().Set("Access-Control-Allow-Credentials", "true")
+	// w.Header().Set("Content-Type", "text/html; charset=utf-8")
+
 	err := json.NewEncoder(w).Encode(respmsg)
 	if err != nil {
 		log.Println(err)

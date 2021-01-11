@@ -32,13 +32,8 @@ const (
 	// ErrIDInvalid is returned when an invalid ID is provided
 	// to a method like Delete.
 	ErrIDInvalid privateError = "models: ID provided was invalid"
-	// ErrRememberRequired is returned when a create or update
-	// is attempted without a user remember token hash
-	ErrRememberRequired privateError = "models: remember token is required"
-	// ErrRememberTooShort is returned when a remember token is
-	// not at least 32 bytes
-	ErrRememberTooShort privateError = "models: remember token must be at least 32 bytes"
-	ErrUserIDRequired   privateError = "models: user ID is required"
+
+	ErrUserIDRequired privateError = "models: user ID is required"
 )
 
 type modelError string

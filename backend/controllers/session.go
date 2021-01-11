@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/gorilla/mux"
+	"github.com/jt6677/ffdtimer/context"
 	"github.com/jt6677/ffdtimer/models"
 )
 
@@ -30,27 +31,22 @@ type Sessions struct {
 	us models.UserService
 }
 type CurrnentSession struct {
-	StartedAt    string `json:"startedat"`
-	UserRemember string `json:"usertoken"`
-}
-type UserToken struct {
-	UserRemember string `json:"usertoken"`
+	StartedAt string `json:"startedat"`
 }
 
 func (s *Sessions) RecordSession(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
+	w.Header().Set("Access-Control-Allow-Origin", "https://1q.gg")
 	w.Header().Set("Access-Control-Allow-Methods", " GET, POST, PUT, PATCH, DELETE, HEAD, OPTIONS")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type,X-PINGOTHER,Authorization")
 	w.Header().Set("Access-Control-Allow-Credentials", "true")
+
 	var currentsession CurrnentSession
 	if err := json.NewDecoder(r.Body).Decode(&currentsession); err != nil {
 		respondJSON("", fmt.Sprint(err), w)
 		return
 	}
-	user, err := s.getUser(currentsession.UserRemember)
-	if err != nil {
-		respondJSON("", fmt.Sprint(err), w)
-		return
-	}
+
+	user := context.User(r.Context())
 	dateid, err := models.DateIDGenerate()
 	if err != nil {
 		respondJSON("", fmt.Sprint(err), w)
@@ -73,9 +69,10 @@ func (s *Sessions) RecordSession(w http.ResponseWriter, r *http.Request) {
 
 }
 func (s *Sessions) Show(w http.ResponseWriter, r *http.Request) {
-	// w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
-	// w.Header().Set("Access-Control-Allow-Methods", " GET, POST, PUT, PATCH, DELETE, HEAD, OPTIONS")
-	// w.Header().Set("Access-Control-Allow-Credentials", "true")
+	w.Header().Set("Access-Control-Allow-Origin", "https://1q.gg")
+	w.Header().Set("Access-Control-Allow-Credentials", "true")
+	w.Header().Set("Access-Control-Allow-Methods", " GET, POST, OPTIONS")
+	w.Header().Set("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept")
 
 	getsessions, count, err := s.dateByDateIDandUserID(r)
 	if err != nil {
@@ -116,33 +113,13 @@ func (s *Sessions) Show(w http.ResponseWriter, r *http.Request) {
 func (s *Sessions) dateByDateIDandUserID(r *http.Request) ([]models.Session, int64, error) {
 	vars := mux.Vars(r)
 	idStr := vars["id"]
-	// fmt.Println(idStr)
 
-	// user := context.User(r.Context())
-	var ur UserToken
-	if err := json.NewDecoder(r.Body).Decode(&ur); err != nil {
-		return nil, 0, err
-	}
+	user := context.User(r.Context())
 
-	user, err := s.getUser(ur.UserRemember)
-	if err != nil {
-		return nil, 0, err
-	}
 	sessions, count, err := s.ss.ByDateIDandUserID(uint(user.ID), idStr)
 	if err != nil {
 		return nil, 0, err
 	}
 
 	return sessions, count, nil
-}
-
-func (s *Sessions) getUser(rembertoken string) (*models.User, error) {
-
-	user, err := s.us.ByRemember(rembertoken)
-	if err != nil {
-		log.Println(err)
-		return nil, err
-	}
-	return user, nil
-
 }

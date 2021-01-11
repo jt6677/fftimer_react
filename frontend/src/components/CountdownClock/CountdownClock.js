@@ -7,7 +7,7 @@ import moment from "moment";
 import { sendEndSig } from "../../actions";
 import { connect } from "react-redux";
 
-var basetime = 5;
+var basetime = 3600;
 export class CountdownClock extends Component {
   state = {
     timeRemain: "",
@@ -20,27 +20,6 @@ export class CountdownClock extends Component {
   };
   //make a Audio objects
   audio = new Audio(soundfile);
-
-  // sendEndSig = async () => {
-  //   let config = {
-  //     url: "/recordsession",
-  //     method: "post",
-  //     withCredentials: true,
-  //     data: {
-  //       startedat: this.state.sessionStarted,
-  //     },
-  //     headers: {
-  //       "Access-Control-Allow-Origin": "https://jt6677.github.io/",
-  //       "Access-Control-Allow-Credentials": "true",
-  //     },
-  //   };
-
-  //   try {
-  //     server.request(config);
-  //   } catch (err) {
-  //     console.log(err);
-  //   }
-  // };
 
   renderButtons() {
     return (
@@ -132,6 +111,7 @@ export class CountdownClock extends Component {
   };
   componentDidMount() {
     if (localStorage.hasOwnProperty("timeRemain") === true) {
+
       this.setState(
         {
           timeRemain: localStorage.getItem("timeRemain"),
@@ -146,13 +126,27 @@ export class CountdownClock extends Component {
         () => this.changeMinSec(this.state.timeRemain)
       );
     }
-
+    //take the first item from localStorage(sessionHistory)
+    //compare to today's date
+    //if differet, delete localStorage(sessionHistory)
+    //if same date, load localStorage(sessionHistory) into this.state.history
     if (localStorage.getItem("sessionhistory") !== null) {
-      this.setState({
-        history: JSON.parse(localStorage.getItem("sessionhistory")),
-      });
+      var sessionHistroylocalstorage = JSON.parse(localStorage.getItem("sessionhistory"))
+      var firstDateofsessionhistory = sessionHistroylocalstorage[0].StartedAt.split(" ")
+      console.log(firstDateofsessionhistory[0]);
+      var todayDate = this.getCurrentTime().split(" ");
+
+      if (todayDate[0] === firstDateofsessionhistory[0]) {
+        this.setState({
+          history: sessionHistroylocalstorage
+        })
+      } else {
+        localStorage.removeItem("sessionhistory")
+      }
+
     }
   }
+
   render() {
     return (
       <div className="mainbody">

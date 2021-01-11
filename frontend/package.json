@@ -1,6 +1,6 @@
 {
-  "name": "ffdtimer-deploy",
-  "homepage": "http://jt6677.github.io/ffdtimer-deploy",
+  "name": "fftimer",
+  "proxy": "https://1q.gg:8080",
   "version": "0.1.0",
   "private": false,
   "dependencies": {

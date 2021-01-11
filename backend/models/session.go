@@ -1,7 +1,6 @@
 package models
 
 import (
-	"fmt"
 	"strconv"
 	"strings"
 	"time"
@@ -105,7 +104,7 @@ func (sv *sessionValidator) CreateSession(session *Session) error {
 	err := runSessionValFuncs(session,
 		sv.userIDRequired,
 	)
-	fmt.Printf("StartAt: %v", session.StartedAt)
+
 	if err != nil {
 		return err
 	}
