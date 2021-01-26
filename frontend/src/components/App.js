@@ -62,7 +62,7 @@ function App() {
           <UnauthenticatedRoutes path="/signinandsignup">
             <SigninSignup />
           </UnauthenticatedRoutes>
-          <UnauthenticatedRoutes path="/">
+          <UnauthenticatedRoutes exact path="/">
             <SigninSignup />
           </UnauthenticatedRoutes>
           <UnauthenticatedRoutes path="/signin">
@@ -71,6 +71,9 @@ function App() {
           <UnauthenticatedRoutes path="/signup">
             <Signup />
           </UnauthenticatedRoutes>
+          <Route path="*">
+            <Redirect to="/" />
+          </Route>
         </Switch>
       </AuthProvider>
     </Router>
