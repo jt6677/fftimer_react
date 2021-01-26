@@ -1,124 +1,132 @@
-import React, { Component } from "react";
-import "./Signin.css";
+import React, { useState, useContext } from "react";
 import { Link } from "react-router-dom";
-import { connect } from "react-redux";
+import "./Signin.css";
 import SVGIcon from "../SVGIcon/SVGIcon";
-import { signIn } from "../../actions";
-import { Field, reduxForm } from "redux-form";
 import Fallfowardpage from "../FallFowardPage/fallfowardpage";
+import { Form, Formik, ErrorMessage } from "formik";
+import * as Yup from "yup";
+import { AuthContext } from "../../context/AuthContext";
+import { publicFetch } from "../../util/fetch";
+import { Redirect } from "react-router-dom";
+import FormInput from "../Input/FormInput";
+// import FormSuccess from "../Input/FormSuccess";
+// import FormError from "../Input/FormError";
+const LoginSchema = Yup.object().shape({
+  username: Yup.string().required("Username is required"),
+  password: Yup.string().required("Password is required"),
+});
 
-const required = (value) =>
-  value || typeof value === "number" ? undefined : "Required";
-export const minLength = (min) => (value) =>
-  value && value.length < min ? `Must be ${min} characters or more` : undefined;
-export const minLength4 = minLength(4);
-export const minLength6 = minLength(6);
+const Signin = () => {
+  const authContext = useContext(AuthContext);
+  const [loginSuccess, setLoginSuccess] = useState("");
+  const [loginError, setLoginError] = useState();
+  const [redirectOnLogin, setRedirectOnLogin] = useState(false);
+  // const [loginLoading, setLoginLoading] = useState(false);
 
-export class Signin extends Component {
-  onSubmit = (formValues) => {
-    this.props.signIn(formValues);
+  const submitCredentials = async (credentials) => {
+    try {
+      // setLoginLoading(true);
+      const { data } = await publicFetch.post(`signin`, credentials);
+
+      if (data.hasOwnProperty("errormessage")) {
+        console.log(data.errormessage);
+        setLoginError(data.errormessage);
+      } else {
+        authContext.setAuthState(data);
+        setLoginSuccess(data.message);
+        setTimeout(() => {
+          setRedirectOnLogin(true);
+        }, 700);
+      }
+    } catch (error) {
+      console.log(error);
+      // setLoginLoading(false);
+      // const { data } = error.response;
+      setLoginError(error);
+      setLoginSuccess(null);
+    }
   };
 
-  renderInput = (formProps) => {
-    return (
-      <React.Fragment>
-        <div className="fields">
-          <label htmlFor="name">
-            <SVGIcon className="icon" iconName={formProps.label} />
-          </label>
-          <input
-            onChange={formProps.input.onChange}
-            value={formProps.input.value}
-            type={formProps.type}
-            placeholder={formProps.placeholder}
-            autoComplete="off"
-          />
-        </div>
-        <div className="errorMSG">
-          {formProps.meta.touched && formProps.meta.error && (
-            <span>{formProps.meta.error}</span>
-          )}
-        </div>
-      </React.Fragment>
-    );
-  };
+  return (
+    <>
+      {redirectOnLogin && <Redirect to="/clock" />}
 
-  render() {
-    return (
       <div className="main-body">
         <Fallfowardpage showWisdom={true} />
+        {loginError && <p className="errorMSG">{loginError} </p>}
+        {loginSuccess && <p>{loginSuccess}</p>}
         <div>
-          <form
-            className=" signin-container error"
-            onSubmit={this.props.handleSubmit(this.onSubmit)}
+          <Formik
+            initialValues={{
+              username: "",
+              password: "",
+            }}
+            onSubmit={(values) => submitCredentials(values)}
+            validationSchema={LoginSchema}
           >
-            <div>
-              <Field
-                type="text"
-                name="username"
-                placeholder=" Username or Cellphone"
-                component={this.renderInput}
-                validate={[required, minLength4]}
-                label="user"
-              />
-
-              <Field
-                type="password"
-                name="password"
-                placeholder=" Password"
-                component={this.renderInput}
-                validate={[required, minLength6]}
-                label="password"
-              />
-            </div>
-            <div className="buttonList">
-              <div className="errorMSG">{this.props.errorMessage}</div>
-              <ul className="buttons">
-                <li>
-                  <input
-                    className={
-                      // || this.props.submitting
-                      this.props.pristine || this.props.submitting
-                        ? "primary signinbutton disabled "
-                        : "primary signinbutton "
-                    }
-                    type="submit"
-                    value="Log In"
+            {(errors, touched) => (
+              <Form className=" signin-container">
+                {/* {loginSuccess && <FormSuccess text={loginSuccess} />} */}
+                <div className="errorMSG">
+                  <ErrorMessage name="username" />
+                </div>
+                <div className="fields">
+                  <label htmlFor="name">
+                    <SVGIcon className="icon" iconName="user" />
+                  </label>
+                  <FormInput
+                    ariaLabel="Username"
+                    name="username"
+                    type="text"
+                    placeholder="username"
                   />
-                </li>
+                </div>
+                <div className="errorMSG">
+                  <ErrorMessage name="password" />
+                </div>
+                <div className="fields">
+                  <label htmlFor="name">
+                    <SVGIcon className="icon" iconName="password" />
+                  </label>
+                  <FormInput
+                    ariaLabel="Password"
+                    name="password"
+                    type="password"
+                    placeholder="Password"
+                  />
+                </div>
 
-                <li>
-                  <Link to="/signinandsignup" className="minor">
-                    &#10229; Go back
-                  </Link>
-                </li>
-              </ul>
-            </div>
-          </form>
+                {/* {errors.username && touched.username ? (
+                  <div>{errors.username}</div>
+                ) : null} */}
+
+                <ul className="buttons">
+                  <li>
+                    <input
+                      className="primary signinbutton"
+                      // className={
+                      //   errors
+                      //     ? "primary signinbutton disabled "
+                      //     : "primary signinbutton"
+                      // }
+                      type="submit"
+                      value="Log In"
+                    />
+                  </li>
+
+                  <li>
+                    <Link to="/signinandsignup" className="minor">
+                      &#10229; Go back
+                    </Link>
+                  </li>
+                </ul>
+              </Form>
+            )}
+          </Formik>
         </div>
       </div>
-    );
-  }
-}
-
-// const formUsername= formValues("username")
-const formWrapped = reduxForm({
-  form: "signinform",
-})(Signin);
-
-// const formSelected = (state) => {
-//   const usernameValue = selector(state, "username");
-//   const passwordValue = selector(state, "password");
-//   return {
-//     usernameValue,
-//     passwordValue,
-//   };
-// };
-
-const mapStateToProps = (state) => {
-  return { errorMessage: state.auth.errorMessage };
+    </>
+  );
 };
 
-const mapDispatchToProps = { signIn };
-
-export default connect(mapStateToProps, mapDispatchToProps)(formWrapped);
+export default Signin;

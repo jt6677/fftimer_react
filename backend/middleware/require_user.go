@@ -3,6 +3,7 @@ package middleware
 import (
 	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/jt6677/ffdtimer/context"
 	"github.com/jt6677/ffdtimer/jwtAuth"
@@ -20,9 +21,15 @@ func (mw *User) Apply(next http.Handler) http.HandlerFunc {
 
 func (mw *User) ApplyFn(next http.HandlerFunc) http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-
+		//check if url needs authentication
+		path:=r.URL.Path
+		if strings.HasPrefix(path, "/signup") ||
+		strings.HasPrefix(path, "/signin") {
+		next(w, r)
+		return
+	}
 		//remeber_token from cookie
-		cookie, err := r.Cookie("jwt")
+		cookie, err := r.Cookie("token")
 		if err != nil {
 			fmt.Println(err)
 			next(w, r)

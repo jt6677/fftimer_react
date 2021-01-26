@@ -1,36 +1,80 @@
-import React, { Component } from "react";
-import { Router, Route, Switch } from "react-router-dom";
+import React, { useContext } from "react";
+import {
+  BrowserRouter as Router,
+  Route,
+  Switch,
+  Redirect,
+} from "react-router-dom";
 import "./App.css";
-import Navbar from "./Navbar/Navbar";
 import CountdownClock from "./CountdownClock/CountdownClock";
 import SigninSignup from "./Auth/SigninSignup";
 import Signin from "./Auth/Signin";
 import Signup from "./Auth/Signup";
-import Signout from "./Auth/Signout";
+import AppShell from "./AppShell";
+
 import DatePick from "./DatePick/DatePick.js";
-import SessionShow from "./SessionShow/SessionShow";
-import history from "../history";
 
-export class App extends Component {
-  render() {
-    return (
-      <div>
-        <Router history={history}>
-          <Navbar />
+import { AuthProvider, AuthContext } from "../context/AuthContext";
+const UnauthenticatedRoutes = ({ children, ...rest }) => {
+  const auth = useContext(AuthContext);
+  return (
+    <Route
+      {...rest}
+      render={() =>
+        auth.isAuthenticated() ? (
+          <Redirect to="/clock" />
+        ) : (
+          <AppShell>{children}</AppShell>
+        )
+      }
+    ></Route>
+  );
+};
 
-          <Switch>
-            <Route path="/" exact component={CountdownClock} />
-            <Route path="/signinandsignup" exact component={SigninSignup} />
-            <Route path="/signin" exact component={Signin} />
-            <Route path="/signup" exact component={Signup} />
-            <Route path="/signout" exact component={Signout} />
-            <Route path="/date/:id" exact component={SessionShow} />
-            <Route path="/datepicker" exact component={DatePick} />
-          </Switch>
-        </Router>
-      </div>
-    );
-  }
+const AuthenticatedRoute = ({ children, ...rest }) => {
+  const auth = useContext(AuthContext);
+  return (
+    <Route
+      {...rest}
+      render={() =>
+        auth.isAuthenticated() ? (
+          <AppShell>{children}</AppShell>
+        ) : (
+          <Redirect to="/signinandsignup" />
+        )
+      }
+    ></Route>
+  );
+};
+
+function App() {
+  return (
+    <Router>
+      <AuthProvider>
+        <Switch>
+          <AuthenticatedRoute path="/clock">
+            <CountdownClock />
+          </AuthenticatedRoute>
+          <AuthenticatedRoute path="/datepicker">
+            <DatePick />
+          </AuthenticatedRoute>
+
+          <UnauthenticatedRoutes path="/signinandsignup">
+            <SigninSignup />
+          </UnauthenticatedRoutes>
+          <UnauthenticatedRoutes path="/">
+            <SigninSignup />
+          </UnauthenticatedRoutes>
+          <UnauthenticatedRoutes path="/signin">
+            <Signin />
+          </UnauthenticatedRoutes>
+          <UnauthenticatedRoutes path="/signup">
+            <Signup />
+          </UnauthenticatedRoutes>
+        </Switch>
+      </AuthProvider>
+    </Router>
+  );
 }
 
 export default App;

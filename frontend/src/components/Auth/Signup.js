@@ -1,124 +1,152 @@
-import React, { Component } from "react";
-import "./Signin.css";
+import React, { useState, useContext } from "react";
 import { Link } from "react-router-dom";
-import { connect } from "react-redux";
+import "./Signin.css";
 import SVGIcon from "../SVGIcon/SVGIcon";
-
-import { signUp } from "../../actions";
-import { Field, reduxForm } from "redux-form";
 import Fallfowardpage from "../FallFowardPage/fallfowardpage";
+import { Form, Formik, ErrorMessage } from "formik";
+import * as Yup from "yup";
+import { AuthContext } from "../../context/AuthContext";
+import { publicFetch } from "../../util/fetch";
+import { Redirect } from "react-router-dom";
+import FormInput from "../Input/FormInput";
+// import FormSuccess from "../Input/FormSuccess";
+// import FormError from "../Input/FormError";
 
-const required = (value) =>
-  value || typeof value === "number" ? undefined : "Required";
-export const minLength = (min) => (value) =>
-  value && value.length < min ? `Must be ${min} characters or more` : undefined;
-export const minLength4 = minLength(4);
-export const minLength6 = minLength(6);
-export const minLength11 = minLength(11);
-
-export class Signup extends Component {
-  onSubmit = (formValues) => {
-    this.props.signUp(formValues);
-  };
-
-  renderInput = (formProps) => {
-    return (
-      <div>
-        <div className="fields">
-          <label htmlFor="name">
-            <SVGIcon className="icon" iconName={formProps.label} />
-          </label>
-          <input
-            onChange={formProps.input.onChange}
-            value={formProps.input.value}
-            type={formProps.type}
-            placeholder={formProps.placeholder}
-            autoComplete="off"
-          />
-        </div>
-        <div className="errorMSG">
-          {formProps.meta.touched && formProps.meta.error && (
-            <span>{formProps.meta.error}</span>
-          )}
-        </div>
-      </div>
-    );
-  };
-  render() {
-    return (
-      <div className="main-body">
-        <Fallfowardpage />
-        <div>
-          <form
-            className="signin-container"
-            onSubmit={this.props.handleSubmit(this.onSubmit)}
-          >
-            <div>
-              <Field
-                type="text"
-                name="username"
-                placeholder=" Username"
-                component={this.renderInput}
-                validate={[required, minLength4]}
-                label="user"
-              />
-
-              <Field
-                type="text"
-                name="cellphone"
-                placeholder=" Cellphone"
-                component={this.renderInput}
-                validate={[required, minLength11]}
-                label="mobile"
-              />
-
-              <Field
-                type="password"
-                name="password"
-                placeholder=" Password"
-                component={this.renderInput}
-                validate={[required, minLength6]}
-                label="password"
-              />
-            </div>
-            <div className="buttonList">
-              <div>{this.props.errorMessage}</div>
-              <ul className="buttons">
-                <li>
-                  <input
-                    className={
-                      // || this.props.submitting
-                      this.props.pristine || this.props.submitting
-                        ? "primary signinbutton disabled "
-                        : "primary signinbutton "
-                    }
-                    type="submit"
-                    value="Log In"
-                  />
-                </li>
-                <li>
-                  <Link to="/signinandsignup" className="minor">
-                    &#10229; Go back
-                  </Link>
-                </li>
-              </ul>
-            </div>
-          </form>
-        </div>
-      </div>
-    );
-  }
-}
-
-const formWrapped = reduxForm({
-  form: "signupform",
-})(Signup);
-
-const mapStateToProps = (state) => ({
-  errorMessage: state.auth.errorMessage,
+const SignupSchema = Yup.object().shape({
+  username: Yup.string().required("Username is required"),
+  password: Yup.string()
+    .min(6, "Needs to Be More Than 6 digit long!")
+    .required("Password is required"),
+  cellphone: Yup.string()
+    .min(11, "Needs to Be 11 digit long!")
+    .required("Cellphone is required"),
+  // firstName: Yup.string()
+  // .min(2, 'Too Short!')
+  // .max(50, 'Too Long!')
+  // .required('Required'),
 });
-const mapDispatchToProps = {
-  signUp,
-};
 
-export default connect(mapStateToProps, mapDispatchToProps)(formWrapped);
+const Signup = () => {
+  const authContext = useContext(AuthContext);
+  const [signupSuccess, setSignupSuccess] = useState();
+  const [signupError, setSignupError] = useState();
+  const [redirectOnLogin, setRedirectOnLogin] = useState(false);
+  // const [loginLoading, setLoginLoading] = useState(false);
+
+  const submitCredentials = async (credentials) => {
+    try {
+      // setLoginLoading(true);
+      const { data } = await publicFetch.post(`signup`, credentials);
+      console.log(data);
+      if (data.hasOwnProperty("errormessage")) {
+        setSignupError(data.errormessage);
+      } else {
+        authContext.setAuthState(data);
+        setSignupSuccess(data.message);
+        setSignupError("");
+
+        setTimeout(() => {
+          setRedirectOnLogin(true);
+        }, 700);
+      }
+    } catch (error) {
+      // setLoginLoading(false);
+      const { data } = error.response;
+      setSignupError(data.message);
+      setSignupSuccess("");
+    }
+  };
+
+  return (
+    <>
+      {redirectOnLogin && <Redirect to="/clock" />}
+
+      <div className="main-body">
+        <Fallfowardpage showWisdom={true} />
+        {signupError && <p className="errorMSG">{signupError} </p>}
+        {signupSuccess && <p>{signupSuccess}</p>}
+        <div>
+          <Formik
+            initialValues={{
+              username: "",
+              password: "",
+            }}
+            onSubmit={(values) => submitCredentials(values)}
+            validationSchema={SignupSchema}
+          >
+            {(errors, touched) => (
+              <Form className=" signin-container">
+                <div className="errorMSG">
+                  <ErrorMessage name="username" />
+                </div>
+                <div className="fields">
+                  <label htmlFor="username">
+                    <SVGIcon className="icon" iconName="user" />
+                  </label>
+                  <FormInput
+                    ariaLabel="Username"
+                    name="username"
+                    type="text"
+                    placeholder="username"
+                  />
+                </div>
+                <div className="errorMSG">
+                  <ErrorMessage name="cellphone" />
+                </div>
+                <div className="fields">
+                  <label htmlFor="cellphone">
+                    <SVGIcon className="icon" iconName="mobile" />
+                  </label>
+                  <FormInput
+                    ariaLabel="Cellphone"
+                    name="cellphone"
+                    type="text"
+                    placeholder="Cellphone"
+                  />
+                </div>
+                <div className="errorMSG">
+                  <ErrorMessage name="password" />
+                </div>
+                <div className="fields">
+                  <label htmlFor="password">
+                    <SVGIcon className="icon" iconName="password" />
+                  </label>
+                  <FormInput
+                    ariaLabel="Password"
+                    name="password"
+                    type="password"
+                    placeholder="Password"
+                  />
+                </div>
+                {/* {errors.username && touched.username ? (
+                  <div>{errors.username}</div>
+                ) : null} */}
+                <ul className="buttons">
+                  <li>
+                    <input
+                      className="primary signinbutton"
+                      // className={
+                      //   errors
+                      //     ? "primary signinbutton disabled "
+                      //     : "primary signinbutton"
+                      // }
+                      type="submit"
+                      value="Sign Up"
+                    />
+                  </li>
+
+                  <li>
+                    <Link to="/signinandsignup" className="minor">
+                      &#10229; Go back
+                    </Link>
+                  </li>
+                </ul>
+              </Form>
+            )}
+          </Formik>
+        </div>
+      </div>
+    </>
+  );
+};
+export default Signup;

@@ -42,14 +42,14 @@ func (s *Sessions) RecordSession(w http.ResponseWriter, r *http.Request) {
 
 	var currentsession CurrnentSession
 	if err := json.NewDecoder(r.Body).Decode(&currentsession); err != nil {
-		respondJSON("", fmt.Sprint(err), w)
+		respondJSON("","", fmt.Sprint(err), w)
 		return
 	}
 
 	user := context.User(r.Context())
 	dateid, err := models.DateIDGenerate()
 	if err != nil {
-		respondJSON("", fmt.Sprint(err), w)
+		respondJSON("","", fmt.Sprint(err), w)
 		return
 	}
 
@@ -60,12 +60,12 @@ func (s *Sessions) RecordSession(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := s.ss.CreateSession(session); err != nil {
-		respondJSON("", fmt.Sprint(err), w)
+		respondJSON("", "",fmt.Sprint(err), w)
 		log.Println(err)
 		return
 	}
 
-	respondJSON("Successfully Recorded currentSession", "", w)
+	respondJSON("Successfully Recorded currentSession", "","", w)
 
 }
 func (s *Sessions) Show(w http.ResponseWriter, r *http.Request) {
@@ -78,10 +78,10 @@ func (s *Sessions) Show(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		switch err {
 		case models.ErrNotFound:
-			respondJSON("", fmt.Sprint(err), w)
+			respondJSON("","", fmt.Sprint(err), w)
 			return
 		default:
-			respondJSON("", "Whoops! Something went wrong.", w)
+			respondJSON("","", "Whoops! Something went wrong.", w)
 			return
 		}
 	}

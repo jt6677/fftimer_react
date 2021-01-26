@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/jt6677/ffdtimer/jwtAuth"
 	"github.com/jt6677/ffdtimer/models"
@@ -37,7 +38,7 @@ func (u *Users) SignUp(w http.ResponseWriter, r *http.Request) {
 	var signupForm SignupJSON
 	if err := json.NewDecoder(r.Body).Decode(&signupForm); err != nil {
 		log.Println(err)
-		respondJSON("", fmt.Sprint(err), w)
+		responseErrorJSON(fmt.Sprint(err), w)
 	}
 
 	newuser := models.User{
@@ -47,8 +48,7 @@ func (u *Users) SignUp(w http.ResponseWriter, r *http.Request) {
 	}
 	if err := u.us.Create(&newuser); err != nil {
 		log.Println(err)
-
-		respondJSON("TokenSignup", fmt.Sprint(err), w)
+		responseErrorJSON(fmt.Sprint(err), w)
 		return
 	}
 	//SignIn func which needs to return a Token
@@ -56,7 +56,7 @@ func (u *Users) SignUp(w http.ResponseWriter, r *http.Request) {
 	founduser, err := u.us.Authenticate(signupForm.Name, signupForm.Password)
 	if err != nil {
 		log.Println(err)
-		respondJSON("", fmt.Sprint(err), w)
+		responseErrorJSON(fmt.Sprint(err), w)
 		return
 	}
 	u.signIn(w, founduser)
@@ -67,13 +67,13 @@ func (u *Users) Login(w http.ResponseWriter, r *http.Request) {
 	signinJSON := SigninJSON{}
 	if err := json.NewDecoder(r.Body).Decode(&signinJSON); err != nil {
 		log.Println("JSON:", err)
-		respondJSON("", fmt.Sprint(err), w)
+		respondJSON("","", fmt.Sprint(err), w)
 	}
 
 	founduser, err := u.us.Authenticate(signinJSON.Name, signinJSON.Password)
 	if err != nil {
 		log.Println(err)
-		respondJSON("", fmt.Sprint(err), w)
+		responseErrorJSON(fmt.Sprint(err), w)
 		return
 	}
 	u.signIn(w, founduser)
@@ -85,8 +85,19 @@ func (u *Users) signIn(w http.ResponseWriter, user *models.User) {
 	signedtoken, err := u.jwt.GenerateToken(user.Name)
 	if err != nil {
 		fmt.Println(err)
+		responseErrorJSON(fmt.Sprint(err), w)
 		return
 	}
 
-	respondJSON(signedtoken, "", w)
+	// respondJSON(signedtoken,"", "Authentication successful!", w)
+	expiresAt := time.Now().Local().Add(1 *time.Hour)
+
+	respmsg := ResponseJSON{Token: signedtoken,ExpiresAt: expiresAt.String(), Message: "Authentication successful!"}
+
+
+	err = json.NewEncoder(w).Encode(&respmsg)
+	if err != nil {
+		log.Println(err)
+		return
+	}
 }

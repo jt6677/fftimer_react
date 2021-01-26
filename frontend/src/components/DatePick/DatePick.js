@@ -1,71 +1,78 @@
-import React, { Component } from "react";
-import { connect } from "react-redux";
+import React, { useState, useContext, useEffect } from "react";
+import server from "../../apis/server";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import SVGIcon from "../SVGIcon/SVGIcon";
-import "../Auth/Signin";
-import { checkDailySession } from "../../actions";
+import { AuthContext } from "../../context/AuthContext";
 import moment from "moment";
 import Fallfowardpage from "../FallFowardPage/fallfowardpage";
-import requireAuth from "../Auth/requireAuth";
-
+import SessionTable from "../SessionTable/SessionTable";
 import { Link } from "react-router-dom";
+const DatePick = () => {
+  const [selecteddate, setSelecteddate] = useState(new Date());
+  const authContext = useContext(AuthContext);
 
-export class DatePick extends Component {
-  state = {
-    selecteddate: new Date(),
-  };
-  handleSubmit = (evt) => {
-    evt.preventDefault();
-    let x = moment(this.state.selecteddate).format("YYYYMMDD");
-    this.props.checkDailySession(x);
-  };
-  handleChange = (date) => {
-    this.setState({
-      selecteddate: date,
-    });
-  };
+  const submitDate = async () => {
+    let formatedDate = moment(selecteddate).format("YYYYMMDD");
+    let link = `/dailysession/${formatedDate}`;
+    let config = {
+      url: link,
+      method: "post",
+      withCredentials: true,
+    };
+    try {
+      const data = await server.request(config);
 
-  render() {
-    return (
-      <div className="main-body">
-        <Fallfowardpage showWisdom={true} />
-        <form className=" signin-container" onSubmit={this.handleSubmit}>
-          <label htmlFor="name">
-            <SVGIcon className="icon" iconName="calendar" />
-          </label>
-          <DatePicker
-            className="datepicker"
-            selected={this.state.selecteddate}
-            onChange={(e) => this.handleChange(e)}
-            dateFormat="yyyyMMdd"
-            isClearable
-          />
-          <div className="buttonList">
-            <span className="errorMSG">{this.props.errorMSG}</span>
-            <ul className="buttons">
-              <li>
-                <input
-                  type="submit"
-                  value="Go"
-                  className="primary signinbutton"
-                />
-              </li>
-              <li>
-                <Link to="/signinandsignup" className="minor">
-                  &#10229; Go back
-                </Link>
-              </li>
-            </ul>
-          </div>
-        </form>
-      </div>
-    );
-  }
-}
-const mapDispatchToProps = { checkDailySession };
+      authContext.setSessiontableState(data.data);
+      // history.push(`/date/${formatedDate}`);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+  useEffect(() => {
+    <SessionTable history={authContext.sessiontableState} />;
+  }, [authContext.sessiontableState]);
 
-const mapStateToProps = (state) => ({ errorMSG: state.getSession.errorMSG });
-export default requireAuth(
-  connect(mapStateToProps, mapDispatchToProps)(DatePick)
-);
+  return (
+    <div className="main-body">
+      <Fallfowardpage showWisdom={true} />
+      <form
+        className=" signin-container"
+        onSubmit={(evt) => {
+          evt.preventDefault();
+          submitDate();
+        }}
+      >
+        <label htmlFor="name">
+          <SVGIcon className="icon" iconName="calendar" />
+        </label>
+        <DatePicker
+          className="datepicker"
+          selected={selecteddate}
+          onChange={(e) => setSelecteddate(e)}
+          dateFormat="yyyyMMdd"
+          isClearable
+        />
+        <div className="buttonList">
+          {/* <span className="errorMSG">{this.props.errorMSG}</span> */}
+          <ul className="buttons">
+            <li>
+              <input
+                type="submit"
+                value="Go"
+                className="primary signinbutton"
+              />
+            </li>
+            <li>
+              <Link to="/signinandsignup" className="minor">
+                &#10229; Go back
+              </Link>
+            </li>
+          </ul>
+        </div>
+      </form>
+      <SessionTable history={authContext.sessiontableState} />
+    </div>
+  );
+};
+export default DatePick;

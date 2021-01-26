@@ -1,6 +1,5 @@
 import React from "react";
 import IntotheWild from "../../assets/circle250.png";
-import "./fallfowardpage.css";
 
 const renderWisdom = (showWisdom) => {
   if (showWisdom) {

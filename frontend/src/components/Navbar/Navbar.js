@@ -1,48 +1,41 @@
-import React, { Component } from "react";
+import React, { useContext } from "react";
 import { Link } from "react-router-dom";
-import { connect } from "react-redux";
+import { AuthContext } from "../../context/AuthContext";
+// import "./Navbar.css";
 
-import "./Navbar.css";
-export class Navbar extends Component {
-  renderAuthButton() {
-    if (!this.props.authenticated || this.props.authenticated === "") {
-      return (
-        <React.Fragment>
-          <Link className="link text-link " to="/signinandsignup">
-            New Account
-          </Link>
-          <Link className="link text-link " to="/signin">
-            Sign In
-          </Link>
-        </React.Fragment>
-      );
-    } else {
-      return (
-        <React.Fragment>
-          <Link className="link text-link" to="/">
-            Timer
-          </Link>
-          <Link className="link text-link" to="/datepicker">
-            Date-pick
-          </Link>
-          <Link className="link text-link " to="/signout">
-            Sign Out
-          </Link>
-        </React.Fragment>
-      );
-    }
-  }
-  render() {
+function Navbar() {
+  const auth = useContext(AuthContext);
+  if (!auth.isAuthenticated()) {
     return (
-      <div className="navbar" style={{ backgroundImage: "none" }}>
-        {this.renderAuthButton()}
+      <div className="navbar">
+        <Link className="link text-link " to="/signinandsignup">
+          New Account
+        </Link>
+        <Link className="link text-link " to="/signin">
+          Sign In
+        </Link>
+      </div>
+    );
+  } else {
+    return (
+      <div className="navbar">
+        <Link className="link text-link" to="/clock">
+          Timer
+        </Link>
+        <Link className="link text-link" to="/datepicker">
+          Date-pick
+        </Link>
+        <Link
+          className="link text-link "
+          onClick={() => {
+            auth.logout();
+          }}
+        >
+          Sign Out
+        </Link>
       </div>
     );
   }
 }
 
-const mapStateToProps = (state) => ({
-  authenticated: state.auth.authenticated,
-});
-
-export default connect(mapStateToProps)(Navbar);
+export default Navbar;
