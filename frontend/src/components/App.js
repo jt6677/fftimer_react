@@ -15,19 +15,10 @@ import AppShell from "./AppShell";
 import DatePick from "./DatePick/DatePick.js";
 
 import { AuthProvider, AuthContext } from "../context/AuthContext";
+
 const UnauthenticatedRoutes = ({ children, ...rest }) => {
-  const auth = useContext(AuthContext);
   return (
-    <Route
-      {...rest}
-      render={() =>
-        auth.isAuthenticated() ? (
-          <Redirect to="/clock" />
-        ) : (
-          <AppShell>{children}</AppShell>
-        )
-      }
-    ></Route>
+    <Route {...rest} render={() => <AppShell>{children}</AppShell>}></Route>
   );
 };
 

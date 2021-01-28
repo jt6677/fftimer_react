@@ -1,8 +1,6 @@
 package models
 
 import (
-	"strconv"
-	"strings"
 	"time"
 
 	"github.com/jinzhu/gorm"
@@ -81,22 +79,10 @@ func (sg *sessionGorm) CreateSession(session *Session) error {
 //can be repeative for same day sessions
 //if session started before 5AM, it counts as the previous day
 func DateIDGenerate() (string, error) {
-	var dateid time.Time
-	var dd string
-	timeNowStamp := time.Now()
-	t1 := timeNowStamp.Format("15:04:05")
-	hr := strings.Split(t1, ":")
-	hrINT, err := strconv.Atoi(hr[0])
-	if err != nil {
-		return "", err
-	}
 
-	if hrINT <= 5 {
-		dateid = time.Now().Add(-24 * time.Hour)
-		dd = dateid.Format("20060102")
-	} else {
-		dd = timeNowStamp.Format("20060102")
-	}
+	timeNowStamp := time.Now()
+	dd := timeNowStamp.Format("20060102")
+	
 	return dd, nil
 }
 

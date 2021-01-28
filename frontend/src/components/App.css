@@ -68,11 +68,8 @@ p {
   text-decoration: inherit;
 }
 
-.timer-page {
+.page-content {
   padding-top: 6rem;
-}
-
-.timer-box {
   grid-area: countdown;
   justify-content: center;
   align-items: center;

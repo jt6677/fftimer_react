@@ -3,7 +3,7 @@ import soundfile from "../../assets/welldone.mp3";
 import moment from "moment";
 // import { useHistoryContext } from "../../context/useHistory";
 import SessionTable from "../SessionTable/SessionTable";
-import server from "../../apis/server";
+import { publicFetch } from "../../util/fetch";
 var basetime = 2;
 const CountdownClock = () => {
   const [timeRemain, setTimeRemain] = useState("");
@@ -11,8 +11,9 @@ const CountdownClock = () => {
   const [minute, setMinute] = useState("");
   const [second, setSecond] = useState("");
   const [counting, setCounting] = useState(false);
-  const [sessionStarted, setSessionStarted] = useState("");
+  const [sessionStarted, setSessionStarted] = useState();
   const [history, setHistory] = useState([]);
+  const [sessionRecordError, setSessionRecordError] = useState();
 
   //make a Audio objects
   const audio = new Audio(soundfile);
@@ -45,6 +46,7 @@ const CountdownClock = () => {
             UpdatedAt: getCurrentTime(),
           },
         ]);
+
         sendEndSig();
         audio.play();
       }
@@ -52,7 +54,8 @@ const CountdownClock = () => {
   }
 
   useEffect(() => {
-    localStorage.setItem("sessionhistory", JSON.stringify(history));
+    if (history.length > 0)
+      localStorage.setItem("sessionhistory", JSON.stringify(history));
   }, [history]);
 
   useEffect(() => {
@@ -77,24 +80,27 @@ const CountdownClock = () => {
     counting ? timeRemain : null
   );
   useEffect(() => {
-    var sessionHistroylocalstorage = JSON.parse(
-      localStorage.getItem("sessionhistory")
-    );
-    if (sessionHistroylocalstorage.length > 0) {
-      var firstDateofsessionhistory = sessionHistroylocalstorage[0].StartedAt.split(
-        " "
-      ); // console.log(firstDateofsessionhistory[0]);
-      var todayDate = getCurrentTime().split(" ");
+    if (localStorage.hasOwnProperty("sessionhistory") === true) {
+      var sessionHistroylocalstorage = JSON.parse(
+        localStorage.getItem("sessionhistory")
+      );
+      if (sessionHistroylocalstorage.length > 0) {
+        var firstDateofsessionhistory = sessionHistroylocalstorage[0].StartedAt.split(
+          " "
+        );
+        var todayDate = getCurrentTime().split(" ");
 
-      if (todayDate[0] === firstDateofsessionhistory[0]) {
-        setHistory(sessionHistroylocalstorage);
-      } else {
-        localStorage.removeItem("sessionhistory");
+        if (todayDate[0] === firstDateofsessionhistory[0]) {
+          setHistory(sessionHistroylocalstorage);
+        } else {
+          console.log("removed");
+          localStorage.removeItem("sessionhistory");
+        }
       }
     }
   }, []);
 
-  const sendEndSig = async () => {
+  const sendEndSig = () => {
     let config = {
       url: "/recordsession",
       method: "post",
@@ -103,11 +109,11 @@ const CountdownClock = () => {
         startedat: sessionStarted,
       },
     };
-
     try {
-      server.request(config);
-    } catch (err) {
-      console.log(err);
+      publicFetch.request(config);
+    } catch (e) {
+      console.log(e);
+      setSessionRecordError(e);
     }
   };
 
@@ -118,9 +124,11 @@ const CountdownClock = () => {
           className={!counting ? " ActiveButton" : "ButtonDisabled"}
           disabled={counting}
           onClick={() => {
-            setCounting(true);
-            if (timeRemain === 0) setTimeRemain(basetime);
+            if (timeRemain === 0) {
+              setTimeRemain(basetime);
+            }
             setSessionStarted(getCurrentTime());
+            setCounting(true);
           }}
         >
           Start
@@ -153,20 +161,20 @@ const CountdownClock = () => {
   };
 
   return (
-    <div className="timer-page">
-      <div className="timer-box">
-        <div className="countdown">
-          <div className="tiles">
-            <span className="minute whitebox">{minute}</span>
-            <span className="second whitebox">{second}</span>
-            <div className="labels">
-              <li>Mins</li>
-              <li>Secs</li>
-            </div>
+    <div className="page-content">
+      <div className="countdown">
+        <div className="tiles">
+          <span className="minute whitebox">{minute}</span>
+          <span className="second whitebox">{second}</span>
+          <div className="labels">
+            <li>Mins</li>
+            <li>Secs</li>
           </div>
         </div>
       </div>
+      {/* </div> */}
       {renderButtons()}
+      {sessionRecordError && <p className="errorMSG">{sessionRecordError} </p>}
       {history.length > 0 && <SessionTable history={history} />}
     </div>
   );

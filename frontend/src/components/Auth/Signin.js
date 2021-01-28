@@ -29,10 +29,10 @@ const Signin = () => {
       const { data } = await publicFetch.post(`signin`, credentials);
 
       if (data.hasOwnProperty("errormessage")) {
-        console.log(data.errormessage);
         setLoginError(data.errormessage);
       } else {
         authContext.setAuthState(data);
+        console.log(data.message);
         setLoginSuccess(data.message);
         setTimeout(() => {
           setRedirectOnLogin(true);
@@ -54,7 +54,7 @@ const Signin = () => {
       <div className="main-body">
         <Fallfowardpage showWisdom={true} />
         {loginError && <p className="errorMSG">{loginError} </p>}
-        {loginSuccess && <p>{loginSuccess}</p>}
+        {loginSuccess && <p className="successMSG">{loginSuccess}</p>}
         <div>
           <Formik
             initialValues={{

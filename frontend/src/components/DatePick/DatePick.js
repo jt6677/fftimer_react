@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from "react";
-import server from "../../apis/server";
+import { publicFetch } from "../../util/fetch";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import SVGIcon from "../SVGIcon/SVGIcon";
@@ -21,7 +21,7 @@ const DatePick = () => {
       withCredentials: true,
     };
     try {
-      const data = await server.request(config);
+      const data = await publicFetch.request(config);
 
       authContext.setSessiontableState(data.data);
       // history.push(`/date/${formatedDate}`);
@@ -31,13 +31,16 @@ const DatePick = () => {
   };
   useEffect(() => {
     <SessionTable history={authContext.sessiontableState} />;
+    return () => {
+      <SessionTable />;
+    };
   }, [authContext.sessiontableState]);
 
   return (
     <div className="main-body">
       <Fallfowardpage showWisdom={true} />
       <form
-        className=" signin-container"
+        // className=" signin-container"
         onSubmit={(evt) => {
           evt.preventDefault();
           submitDate();

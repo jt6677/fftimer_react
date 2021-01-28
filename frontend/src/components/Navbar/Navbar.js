@@ -30,6 +30,7 @@ function Navbar() {
           onClick={() => {
             auth.logout();
           }}
+          to="/signinandsignup"
         >
           Sign Out
         </Link>

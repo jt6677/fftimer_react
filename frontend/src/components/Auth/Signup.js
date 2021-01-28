@@ -37,7 +37,7 @@ const Signup = () => {
     try {
       // setLoginLoading(true);
       const { data } = await publicFetch.post(`signup`, credentials);
-      console.log(data);
+
       if (data.hasOwnProperty("errormessage")) {
         setSignupError(data.errormessage);
       } else {
@@ -64,7 +64,7 @@ const Signup = () => {
       <div className="main-body">
         <Fallfowardpage showWisdom={true} />
         {signupError && <p className="errorMSG">{signupError} </p>}
-        {signupSuccess && <p>{signupSuccess}</p>}
+        {signupSuccess && <p className="successMSG">{signupSuccess}</p>}
         <div>
           <Formik
             initialValues={{

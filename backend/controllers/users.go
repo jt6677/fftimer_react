@@ -90,11 +90,8 @@ func (u *Users) signIn(w http.ResponseWriter, user *models.User) {
 	}
 
 	// respondJSON(signedtoken,"", "Authentication successful!", w)
-	expiresAt := time.Now().Local().Add(1 *time.Hour)
-
-	respmsg := ResponseJSON{Token: signedtoken,ExpiresAt: expiresAt.String(), Message: "Authentication successful!"}
-
-
+	expiresAt := time.Now().Local().Add(1 *time.Hour).Format("2006/01/02 15:04:05 GMT-0700")
+	respmsg := ResponseJSON{Token: signedtoken,ExpiresAt: expiresAt, Message: "Authentication successful!"}
 	err = json.NewEncoder(w).Encode(&respmsg)
 	if err != nil {
 		log.Println(err)

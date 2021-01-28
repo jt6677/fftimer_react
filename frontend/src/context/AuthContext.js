@@ -17,13 +17,11 @@ const AuthProvider = ({ children }) => {
   });
   const [sessiontableState, setSessiontableState] = useState([]);
   const setAuthInfo = ({ token, expiresAt }) => {
-    console.log(token);
     localStorage.setItem("token", token);
     localStorage.setItem("expiresAt", expiresAt);
     Cookie.set("token", token, { sameSite: "strict" });
     setAuthState({
       token,
-      // userInfo,
       expiresAt,
     });
   };
@@ -42,31 +40,6 @@ const AuthProvider = ({ children }) => {
     return new Date() < new Date(authState.expiresAt);
   };
 
-  // const getAccessToken = () => {
-  //   return localStorage.getItem("token");
-  // };
-
-  // const getNewToken = async () => {
-  //   try {
-  //     const { data } = await publicFetch.get("/token/refresh");
-  //     setAuthState(Object.assign({}, authState, { token: data.token }));
-  //   } catch (err) {
-  //     return err;
-  //   }
-  // };
-
-  // const getNewTokenForRequest = async (failedRequest) => {
-  //   const { data } = await publicFetch.get("/token/refresh");
-
-  //   failedRequest.response.config.headers[
-  //     "Authorization"
-  //   ] = `Bearer ${data.token}`;
-
-  //   localStorage.setItem("token", data.token);
-
-  //   return Promise.resolve();
-  // };
-
   return (
     <Provider
       value={{
@@ -76,10 +49,6 @@ const AuthProvider = ({ children }) => {
         setSessiontableState,
         logout,
         isAuthenticated,
-        // isAdmin,
-        // getNewToken,
-        // getAccessToken,
-        // getNewTokenForRequest,
       }}
     >
       {children}

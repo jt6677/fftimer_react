@@ -35,11 +35,7 @@ type CurrnentSession struct {
 }
 
 func (s *Sessions) RecordSession(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Access-Control-Allow-Origin", "https://1q.gg")
-	w.Header().Set("Access-Control-Allow-Methods", " GET, POST, PUT, PATCH, DELETE, HEAD, OPTIONS")
-	w.Header().Set("Access-Control-Allow-Headers", "Content-Type,X-PINGOTHER,Authorization")
-	w.Header().Set("Access-Control-Allow-Credentials", "true")
-
+fmt.Println("Coming in")
 	var currentsession CurrnentSession
 	if err := json.NewDecoder(r.Body).Decode(&currentsession); err != nil {
 		respondJSON("","", fmt.Sprint(err), w)
