@@ -52,16 +52,14 @@ func (u *Users) SignUp(w http.ResponseWriter, r *http.Request) {
 		Cellphone: signupForm.Cellphone,
 	}
 	if err := u.us.Create(&newuser); err != nil {
-		log.Println(err)
-		responseErrorJSON(fmt.Sprint(err), w)
+		http.Error(w, err.Error(), http.StatusUnauthorized)
 		return
 	}
 	//SignIn func which needs to return a Token
 
 	founduser, err := u.us.Authenticate(signupForm.Name, signupForm.Password)
 	if err != nil {
-		log.Println(err)
-		responseErrorJSON(fmt.Sprint(err), w)
+		http.Error(w, err.Error(), http.StatusUnauthorized)
 		return
 	}
 	u.signIn(w, r, founduser)
@@ -71,18 +69,16 @@ func (u *Users) Signin(w http.ResponseWriter, r *http.Request) {
 
 	signinJSON := SigninJSON{}
 	if err := json.NewDecoder(r.Body).Decode(&signinJSON); err != nil {
-		log.Println("JSON:", err)
-		respondJSON("", "", fmt.Sprint(err), w)
+
+		http.Error(w, err.Error(), http.StatusUnauthorized)
+		return
 	}
 
 	founduser, err := u.us.Authenticate(signinJSON.Name, signinJSON.Password)
 	if err != nil {
-		fmt.Print(err)
-		log.Println(err)
-		responseErrorJSON(fmt.Sprint(err), w)
+		http.Error(w, err.Error(), http.StatusUnauthorized)
 		return
 	}
-	fmt.Println(founduser.Name)
 
 	u.signIn(w, r, founduser)
 
