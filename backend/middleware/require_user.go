@@ -6,13 +6,13 @@ import (
 	"strings"
 
 	"github.com/jt6677/ffdtimer/context"
-	"github.com/jt6677/ffdtimer/jwtAuth"
+	"github.com/jt6677/ffdtimer/controllers"
 	"github.com/jt6677/ffdtimer/models"
 )
 
 type User struct {
-	UserService models.UserService
-	JwtService  jwtAuth.JwtService
+	UserService    models.UserService
+	UserController controllers.Users
 }
 
 func (mw *User) Apply(next http.Handler) http.HandlerFunc {
@@ -22,26 +22,29 @@ func (mw *User) Apply(next http.Handler) http.HandlerFunc {
 func (mw *User) ApplyFn(next http.HandlerFunc) http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		//check if url needs authentication
-		path:=r.URL.Path
-		if strings.HasPrefix(path, "/signup") ||
-		strings.HasPrefix(path, "/signin") {
-		next(w, r)
-		return
-	}
-		//remeber_token from cookie
-		cookie, err := r.Cookie("token")
-		if err != nil {
-			fmt.Println(err)
+		path := r.URL.Path
+		fmt.Println(path)
+		if strings.HasPrefix(path, "/api/signup") ||
+			strings.HasPrefix(path, "/api/signin") ||
+			strings.HasPrefix(path, "/api/logout") ||
+			strings.HasPrefix(path, "/api/csrf") ||
+			strings.HasPrefix(path, "/favicon.ico") ||
+			strings.HasPrefix(path, "/mockServiceWorker") {
 			next(w, r)
 			return
 		}
-
-		userName, err := mw.JwtService.ValidateToken(cookie.Value)
+		fmt.Println("link visited: ", path)
+		//Get session from  cookie
+		sessionuser, err := mw.UserController.IsLogin(w, r)
 		if err != nil {
-			next(w, r)
+			// fmt.Println(err)
 			return
 		}
-		user, err := mw.UserService.ByName(userName)
+		user, err := mw.UserService.ByName(sessionuser.Username)
+		if err != nil {
+			// fmt.Println(err)
+			return
+		}
 		ctx := r.Context()
 		ctx = context.WithUser(ctx, user)
 		r = r.WithContext(ctx)
