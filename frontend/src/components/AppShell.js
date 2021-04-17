@@ -1,6 +1,6 @@
-import React from "react";
-import Footer from "../components/Footer/Footer";
-import Navbar from "./Navbar/Navbar";
+import React from 'react'
+import Footer from '../components/Footer/Footer'
+import Navbar from './Navbar'
 const AppShell = ({ children }) => {
   return (
     <div>
@@ -8,7 +8,7 @@ const AppShell = ({ children }) => {
       {children}
       <Footer />
     </div>
-  );
-};
+  )
+}
 
-export default AppShell;
+export default AppShell

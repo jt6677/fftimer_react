@@ -1,11 +1,11 @@
-import React, { useContext } from "react";
-import { Link } from "react-router-dom";
-import { AuthContext } from "../../context/AuthContext";
-// import "./Navbar.css";
+import React from 'react'
+import { Link } from 'react-router-dom'
+import { useAuth } from 'context/AuthContext'
 
 function Navbar() {
-  const auth = useContext(AuthContext);
-  if (!auth.isAuthenticated()) {
+  const { user, logout } = useAuth()
+
+  if (!user) {
     return (
       <div className="navbar">
         <Link className="link text-link " to="/signinandsignup">
@@ -15,7 +15,7 @@ function Navbar() {
           Sign In
         </Link>
       </div>
-    );
+    )
   } else {
     return (
       <div className="navbar">
@@ -28,15 +28,16 @@ function Navbar() {
         <Link
           className="link text-link "
           onClick={() => {
-            auth.logout();
+            logout()
           }}
           to="/signinandsignup"
         >
           Sign Out
         </Link>
+        <Link className="link text-link ">hi, {user}</Link>
       </div>
-    );
+    )
   }
 }
 
-export default Navbar;
+export default Navbar

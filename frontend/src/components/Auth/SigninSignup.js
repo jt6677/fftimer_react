@@ -1,7 +1,7 @@
-import React, { Component } from "react";
-import "./Signin.css";
-import { Link } from "react-router-dom";
-import Fallfowardpage from "../FallFowardPage/fallfowardpage";
+import React, { Component } from 'react'
+import './Signin.css'
+import { Link } from 'react-router-dom'
+import Fallfowardpage from '../FallFowardPage/fallfowardpage'
 
 export class SigninSignup extends Component {
   render() {
@@ -29,8 +29,8 @@ export class SigninSignup extends Component {
           </ul>
         </div>
       </div>
-    );
+    )
   }
 }
 
-export default SigninSignup;
+export default SigninSignup

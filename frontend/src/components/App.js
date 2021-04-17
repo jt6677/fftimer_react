@@ -1,74 +1,66 @@
-import React, { useContext } from "react";
+import React from 'react'
 import {
   BrowserRouter as Router,
   Route,
   Switch,
   Redirect,
-} from "react-router-dom";
-import "./App.css";
-import CountdownClock from "./CountdownClock/CountdownClock";
-import SigninSignup from "./Auth/SigninSignup";
-import Signin from "./Auth/Signin";
-import Signup from "./Auth/Signup";
-import AppShell from "./AppShell";
-
-import DatePick from "./DatePick/DatePick.js";
-
-import { AuthProvider, AuthContext } from "../context/AuthContext";
-
-const UnauthenticatedRoutes = ({ children, ...rest }) => {
-  return (
-    <Route {...rest} render={() => <AppShell>{children}</AppShell>}></Route>
-  );
-};
-
+} from 'react-router-dom'
+import './App.css'
+import SigninSignup from 'components/Auth/SigninSignup'
+import Signin from 'components/Auth/Signin'
+import Signup from 'components/Auth/Signup'
+import AppShell from './AppShell'
+import { useAuth } from 'context/AuthContext'
+import CountdownClock from './CountdownClock'
+import DatePick from './DatePick'
 const AuthenticatedRoute = ({ children, ...rest }) => {
-  const auth = useContext(AuthContext);
+  const { user } = useAuth()
   return (
     <Route
       {...rest}
       render={() =>
-        auth.isAuthenticated() ? (
-          <AppShell>{children}</AppShell>
-        ) : (
-          <Redirect to="/signinandsignup" />
-        )
+        user ? <AppShell>{children}</AppShell> : <Redirect to="/" />
       }
     ></Route>
-  );
-};
-
+  )
+}
+const UnAuthenticatedRoute = ({ children, ...rest }) => {
+  const { user } = useAuth()
+  return (
+    <Route
+      {...rest}
+      render={() => (user ? <Redirect to="/clock" /> : <>{children}</>)}
+    ></Route>
+  )
+}
 function App() {
   return (
     <Router>
-      <AuthProvider>
-        <Switch>
-          <AuthenticatedRoute path="/clock">
-            <CountdownClock />
-          </AuthenticatedRoute>
-          <AuthenticatedRoute path="/datepicker">
-            <DatePick />
-          </AuthenticatedRoute>
+      <Switch>
+        <UnAuthenticatedRoute path="/signin">
+          <Signin />
+        </UnAuthenticatedRoute>
 
-          <UnauthenticatedRoutes path="/signinandsignup">
-            <SigninSignup />
-          </UnauthenticatedRoutes>
-          <UnauthenticatedRoutes exact path="/">
-            <SigninSignup />
-          </UnauthenticatedRoutes>
-          <UnauthenticatedRoutes path="/signin">
-            <Signin />
-          </UnauthenticatedRoutes>
-          <UnauthenticatedRoutes path="/signup">
-            <Signup />
-          </UnauthenticatedRoutes>
-          <Route path="*">
-            <Redirect to="/" />
-          </Route>
-        </Switch>
-      </AuthProvider>
+        <UnAuthenticatedRoute path="/signup">
+          <Signup />
+        </UnAuthenticatedRoute>
+        <UnAuthenticatedRoute exact path="/">
+          <SigninSignup />
+        </UnAuthenticatedRoute>
+
+        <AuthenticatedRoute path="/clock">
+          <CountdownClock />
+        </AuthenticatedRoute>
+
+        <AuthenticatedRoute path="/datepicker">
+          <DatePick />
+        </AuthenticatedRoute>
+        <Route path="*">
+          <Redirect to="/" />
+        </Route>
+      </Switch>
     </Router>
-  );
+  )
 }
 
-export default App;
+export default App

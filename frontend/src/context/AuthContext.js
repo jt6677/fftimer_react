@@ -1,59 +1,70 @@
-import React, { createContext, useState } from "react";
-import { useHistory } from "react-router-dom";
-import Cookie from "js-cookie";
-const AuthContext = createContext();
-const { Provider } = AuthContext;
+import React from 'react'
 
-const AuthProvider = ({ children }) => {
-  const history = useHistory();
+import { Client } from 'util/api-client'
+import { useAsync } from 'util/hooks'
+const AuthContext = React.createContext()
 
-  const token = localStorage.getItem("token");
-  // const userInfo = localStorage.getItem('userInfo');
-  const expiresAt = localStorage.getItem("expiresAt");
-  const [authState, setAuthState] = useState({
-    token,
-    expiresAt,
-    // userInfo: userInfo ? JSON.parse(userInfo) : {}
-  });
-  const [sessiontableState, setSessiontableState] = useState([]);
-  const setAuthInfo = ({ token, expiresAt }) => {
-    localStorage.setItem("token", token);
-    localStorage.setItem("expiresAt", expiresAt);
-    Cookie.set("token", token, { sameSite: "strict" });
-    setAuthState({
-      token,
-      expiresAt,
-    });
-  };
+AuthContext.displayName = 'AuthContext'
+async function getUser() {
+  const { username: user } = await Client(`me`)
+  return user
+}
 
-  const logout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("expiresAt");
-    setAuthState({});
-    history.push("/");
-  };
-
-  const isAuthenticated = () => {
-    if (!authState.expiresAt) {
-      return false;
+const AuthProvider = (props) => {
+  const logout = async () => {
+    try {
+      await Client(`logout`)
+    } catch (err) {
+      console.log(err)
+    } finally {
+      setData(null)
     }
-    return new Date() < new Date(authState.expiresAt);
-  };
+  }
 
-  return (
-    <Provider
-      value={{
-        authState,
-        setAuthState: (authInfo) => setAuthInfo(authInfo),
-        sessiontableState,
-        setSessiontableState,
-        logout,
-        isAuthenticated,
-      }}
-    >
-      {children}
-    </Provider>
-  );
-};
+  const [sessiontableState, setSessiontableState] = React.useState([])
+  const {
+    data: user,
+    isLoading,
+    isIdle,
+    isError,
+    isSuccess,
+    run,
+    setData,
+    status,
+  } = useAsync()
 
-export { AuthContext, AuthProvider };
+  React.useEffect(() => {
+    run(getUser())
+  }, [run])
+
+  if (isLoading || isIdle) {
+    return <div>Loading</div>
+  }
+
+  if (isError) {
+    return <div>Error, Please reload...</div>
+  }
+
+  if (isSuccess) {
+    const value = {
+      user,
+      logout,
+      setData,
+      sessiontableState,
+      setSessiontableState,
+    }
+    return <AuthContext.Provider value={value} {...props} />
+  }
+
+  throw new Error(`Unhandled status: ${status}`)
+}
+
+function useAuth() {
+  const context = React.useContext(AuthContext)
+  if (context === undefined) {
+    throw new Error(`useAuth must be used within a AuthProvider`)
+  }
+  return context
+}
+
+export { AuthProvider, useAuth }

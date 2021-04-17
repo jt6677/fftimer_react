@@ -1,61 +1,54 @@
-import React, { useState, useContext } from "react";
-import { Link } from "react-router-dom";
-import "./Signin.css";
-import SVGIcon from "../SVGIcon/SVGIcon";
-import Fallfowardpage from "../FallFowardPage/fallfowardpage";
-import { Form, Formik, ErrorMessage } from "formik";
-import * as Yup from "yup";
-import { AuthContext } from "../../context/AuthContext";
-import { publicFetch } from "../../util/fetch";
-import { Redirect } from "react-router-dom";
-import FormInput from "../Input/FormInput";
-// import FormSuccess from "../Input/FormSuccess";
-// import FormError from "../Input/FormError";
+import React from 'react'
+import { Link } from 'react-router-dom'
+import './Signin.css'
+import SVGIcon from '../SVGIcon/SVGIcon'
+import Fallfowardpage from '../FallFowardPage/fallfowardpage'
+import { Form, Formik, ErrorMessage } from 'formik'
+import * as Yup from 'yup'
+import { publicFetch } from '../../util/fetch'
+import { Redirect } from 'react-router-dom'
+import FormInput from '../Input/FormInput'
+
+import { useAuth } from 'context/AuthContext'
 
 const SignupSchema = Yup.object().shape({
-  username: Yup.string().required("Username is required"),
+  username: Yup.string().required('Username is required'),
   password: Yup.string()
-    .min(6, "Needs to Be More Than 6 digit long!")
-    .required("Password is required"),
+    .min(6, 'Needs to Be More Than 6 digit long!')
+    .required('Password is required'),
   cellphone: Yup.string()
-    .min(11, "Needs to Be 11 digit long!")
-    .required("Cellphone is required"),
+    .min(11, 'Needs to Be 11 digit long!')
+    .required('Cellphone is required'),
   // firstName: Yup.string()
   // .min(2, 'Too Short!')
   // .max(50, 'Too Long!')
   // .required('Required'),
-});
+})
 
 const Signup = () => {
-  const authContext = useContext(AuthContext);
-  const [signupSuccess, setSignupSuccess] = useState();
-  const [signupError, setSignupError] = useState();
-  const [redirectOnLogin, setRedirectOnLogin] = useState(false);
-  // const [loginLoading, setLoginLoading] = useState(false);
+  const { setData } = useAuth()
+  const [isSuccess, setIsSuccess] = React.useState()
+  const [isError, setIsError] = React.useState()
+  const [redirectOnLogin, setRedirectOnLogin] = React.useState(false)
+  // const [isLoading, setIsLoading] = React.useState(false)
 
   const submitCredentials = async (credentials) => {
     try {
-      // setLoginLoading(true);
-      const { data } = await publicFetch.post(`signup`, credentials);
+      // setIsLoading(true)
+      const { data } = await publicFetch.post(`signin`, credentials)
 
-      if (data.hasOwnProperty("errormessage")) {
-        setSignupError(data.errormessage);
-      } else {
-        authContext.setAuthState(data);
-        setSignupSuccess(data.message);
-        setSignupError("");
-
-        setTimeout(() => {
-          setRedirectOnLogin(true);
-        }, 700);
-      }
+      setIsSuccess('Successfully Login!')
+      setIsError(null)
+      setTimeout(() => {
+        setData(data)
+        setRedirectOnLogin(true)
+      }, 700)
     } catch (error) {
-      // setLoginLoading(false);
-      const { data } = error.response;
-      setSignupError(data.message);
-      setSignupSuccess("");
+      // setIsLoading(false)
+      setIsError(error.response.data)
+      setIsSuccess(null)
     }
-  };
+  }
 
   return (
     <>
@@ -63,13 +56,13 @@ const Signup = () => {
 
       <div className="main-body">
         <Fallfowardpage showWisdom={true} />
-        {signupError && <p className="errorMSG">{signupError} </p>}
-        {signupSuccess && <p className="successMSG">{signupSuccess}</p>}
+        {isError && <p className="errorMSG">{isError} </p>}
+        {isSuccess && <p className="successMSG">{isSuccess}</p>}
         <div>
           <Formik
             initialValues={{
-              username: "",
-              password: "",
+              username: '',
+              password: '',
             }}
             onSubmit={(values) => submitCredentials(values)}
             validationSchema={SignupSchema}
@@ -118,25 +111,17 @@ const Signup = () => {
                     placeholder="Password"
                   />
                 </div>
-                {/* {errors.username && touched.username ? (
-                  <div>{errors.username}</div>
-                ) : null} */}
                 <ul className="buttons">
                   <li>
                     <input
                       className="primary signinbutton"
-                      // className={
-                      //   errors
-                      //     ? "primary signinbutton disabled "
-                      //     : "primary signinbutton"
-                      // }
                       type="submit"
                       value="Sign Up"
                     />
                   </li>
 
                   <li>
-                    <Link to="/signinandsignup" className="minor">
+                    <Link to="/" className="minor">
                       &#10229; Go back
                     </Link>
                   </li>
@@ -147,6 +132,6 @@ const Signup = () => {
         </div>
       </div>
     </>
-  );
-};
-export default Signup;
+  )
+}
+export default Signup
