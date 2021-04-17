@@ -23,26 +23,22 @@ func (mw *User) ApplyFn(next http.HandlerFunc) http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		//check if url needs authentication
 		path := r.URL.Path
-		fmt.Println(path)
-		if strings.HasPrefix(path, "/api/signup") ||
-			strings.HasPrefix(path, "/api/signin") ||
-			strings.HasPrefix(path, "/api/logout") ||
-			strings.HasPrefix(path, "/api/csrf") ||
-			strings.HasPrefix(path, "/favicon.ico") ||
-			strings.HasPrefix(path, "/mockServiceWorker") {
+		if strings.HasSuffix(path, "/signup") ||
+			strings.HasSuffix(path, "/signin") ||
+			strings.HasSuffix(path, "/logout") ||
+			strings.HasSuffix(path, "/csrf") ||
+			strings.HasSuffix(path, "/favicon.ico") ||
+			strings.HasSuffix(path, "/mockServiceWorker") {
 			next(w, r)
 			return
 		}
-		fmt.Println("link visited: ", path)
 		//Get session from  cookie
 		sessionuser, err := mw.UserController.IsLogin(w, r)
 		if err != nil {
-			// fmt.Println(err)
 			return
 		}
 		user, err := mw.UserService.ByName(sessionuser.Username)
 		if err != nil {
-			// fmt.Println(err)
 			return
 		}
 		ctx := r.Context()

@@ -64,7 +64,6 @@ func (u *Users) SignUp(w http.ResponseWriter, r *http.Request) {
 		responseErrorJSON(fmt.Sprint(err), w)
 		return
 	}
-	fmt.Println(founduser.Name)
 	u.signIn(w, r, founduser)
 }
 

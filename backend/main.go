@@ -57,15 +57,25 @@ func main() {
 
 	r := mux.NewRouter()
 	//csrf
-	r.HandleFunc("/api/csrf", csrfResponse)
 	r.Handle("/favicon.ico", http.NotFoundHandler())
-
-	r.HandleFunc("/api/me", requireUserMw.ApplyFn(userC.Me)).Methods("GET")
-	r.HandleFunc("/api/signup", userC.SignUp).Methods("POST")
-	r.HandleFunc("/api/signin", userC.Signin).Methods("POST")
-	r.HandleFunc("/api/recordsession", requireUserMw.ApplyFn(timeblockC.RecordSession))
-	r.HandleFunc("/api/dailysession/{id:[0-9]+}", requireUserMw.ApplyFn(timeblockC.Show)).Methods("POST", "GET", "OPTIONS")
-	r.HandleFunc("/api/logout", userC.Logout)
+	if cfg.IsProd() {
+		r.HandleFunc("/csrf", csrfResponse)
+		r.HandleFunc("/me", requireUserMw.ApplyFn(userC.Me)).Methods("GET")
+		r.HandleFunc("/signup", userC.SignUp).Methods("POST")
+		r.HandleFunc("/signin", userC.Signin).Methods("POST")
+		r.HandleFunc("/recordsession", requireUserMw.ApplyFn(timeblockC.RecordSession))
+		r.HandleFunc("/dailysession/{id:[0-9]+}", requireUserMw.ApplyFn(timeblockC.Show)).Methods("POST", "GET", "OPTIONS")
+		r.HandleFunc("/logout", userC.Logout)
+		fmt.Printf("Listen%v, System is all GO!\n", cfg.Port)
+	} else {
+		r.HandleFunc("/api/csrf", csrfResponse)
+		r.HandleFunc("/api/me", requireUserMw.ApplyFn(userC.Me)).Methods("GET")
+		r.HandleFunc("/api/signup", userC.SignUp).Methods("POST")
+		r.HandleFunc("/api/signin", userC.Signin).Methods("POST")
+		r.HandleFunc("/api/recordsession", requireUserMw.ApplyFn(timeblockC.RecordSession))
+		r.HandleFunc("/api/dailysession/{id:[0-9]+}", requireUserMw.ApplyFn(timeblockC.Show)).Methods("POST", "GET", "OPTIONS")
+		r.HandleFunc("/api/logout", userC.Logout)
+	}
 	fmt.Printf("Listen%v, System is all GO!\n", cfg.Port)
 	log.Fatal(http.ListenAndServe(cfg.Port, userMw.Apply(r)))
 	// log.Fatal(http.ListenAndServe(":8080", csrfMw(userMw.Apply(r))))
