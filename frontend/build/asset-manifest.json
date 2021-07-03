@@ -1,0 +1,25 @@
+{
+  "files": {
+    "main.css": "/static/css/main.fa350cfc.chunk.css",
+    "main.js": "/static/js/main.cb897e08.chunk.js",
+    "main.js.map": "/static/js/main.cb897e08.chunk.js.map",
+    "runtime-main.js": "/static/js/runtime-main.a86bd3e8.js",
+    "runtime-main.js.map": "/static/js/runtime-main.a86bd3e8.js.map",
+    "static/css/2.d0cbb043.chunk.css": "/static/css/2.d0cbb043.chunk.css",
+    "static/js/2.ea01a6c9.chunk.js": "/static/js/2.ea01a6c9.chunk.js",
+    "static/js/2.ea01a6c9.chunk.js.map": "/static/js/2.ea01a6c9.chunk.js.map",
+    "index.html": "/index.html",
+    "static/css/2.d0cbb043.chunk.css.map": "/static/css/2.d0cbb043.chunk.css.map",
+    "static/css/main.fa350cfc.chunk.css.map": "/static/css/main.fa350cfc.chunk.css.map",
+    "static/js/2.ea01a6c9.chunk.js.LICENSE.txt": "/static/js/2.ea01a6c9.chunk.js.LICENSE.txt",
+    "static/media/circle250.439011ca.png": "/static/media/circle250.439011ca.png",
+    "static/media/welldone.b7666902.mp3": "/static/media/welldone.b7666902.mp3"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.a86bd3e8.js",
+    "static/css/2.d0cbb043.chunk.css",
+    "static/js/2.ea01a6c9.chunk.js",
+    "static/css/main.fa350cfc.chunk.css",
+    "static/js/main.cb897e08.chunk.js"
+  ]
+}

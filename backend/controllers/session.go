@@ -35,17 +35,17 @@ type CurrnentSession struct {
 }
 
 func (s *Sessions) RecordSession(w http.ResponseWriter, r *http.Request) {
-fmt.Println("Coming in")
+	fmt.Println("Coming in")
 	var currentsession CurrnentSession
 	if err := json.NewDecoder(r.Body).Decode(&currentsession); err != nil {
-		respondJSON("","", fmt.Sprint(err), w)
+		respondJSON("", "", fmt.Sprint(err), w)
 		return
 	}
 
 	user := context.User(r.Context())
 	dateid, err := models.DateIDGenerate()
 	if err != nil {
-		respondJSON("","", fmt.Sprint(err), w)
+		respondJSON("", "", fmt.Sprint(err), w)
 		return
 	}
 
@@ -56,28 +56,24 @@ fmt.Println("Coming in")
 	}
 
 	if err := s.ss.CreateSession(session); err != nil {
-		respondJSON("", "",fmt.Sprint(err), w)
+		respondJSON("", "", fmt.Sprint(err), w)
 		log.Println(err)
 		return
 	}
 
-	respondJSON("Successfully Recorded currentSession", "","", w)
+	respondJSON("Successfully Recorded currentSession", "", "", w)
 
 }
 func (s *Sessions) Show(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Access-Control-Allow-Origin", "https://1q.gg")
-	w.Header().Set("Access-Control-Allow-Credentials", "true")
-	w.Header().Set("Access-Control-Allow-Methods", " GET, POST, OPTIONS")
-	w.Header().Set("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept")
 
 	getsessions, count, err := s.dateByDateIDandUserID(r)
 	if err != nil {
 		switch err {
 		case models.ErrNotFound:
-			respondJSON("","", fmt.Sprint(err), w)
+			respondJSON("", "", fmt.Sprint(err), w)
 			return
 		default:
-			respondJSON("","", "Whoops! Something went wrong.", w)
+			respondJSON("", "", "Whoops! Something went wrong.", w)
 			return
 		}
 	}

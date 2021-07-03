@@ -23,12 +23,12 @@ func (mw *User) ApplyFn(next http.HandlerFunc) http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		//check if url needs authentication
 		path := r.URL.Path
-		if strings.HasSuffix(path, "/signup") ||
-			strings.HasSuffix(path, "/signin") ||
-			strings.HasSuffix(path, "/logout") ||
-			strings.HasSuffix(path, "/csrf") ||
-			strings.HasSuffix(path, "/favicon.ico") ||
-			strings.HasSuffix(path, "/mockServiceWorker") {
+		if strings.HasSuffix(path, "/api/signup") ||
+			strings.HasSuffix(path, "/api/signin") ||
+			strings.HasSuffix(path, "/api/logout") ||
+			strings.HasSuffix(path, "/api/csrf") ||
+			strings.HasSuffix(path, "/api/favicon.ico") ||
+			strings.HasSuffix(path, "/api/mockServiceWorker") {
 			next(w, r)
 			return
 		}

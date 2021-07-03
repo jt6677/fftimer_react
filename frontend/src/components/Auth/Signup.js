@@ -35,12 +35,12 @@ const Signup = () => {
   const submitCredentials = async (credentials) => {
     try {
       // setIsLoading(true)
-      const { data } = await publicFetch.post(`signin`, credentials)
+      const { data } = await publicFetch.post(`signup`, credentials)
 
       setIsSuccess('Successfully Login!')
       setIsError(null)
       setTimeout(() => {
-        setData(data)
+        setData(data.username)
         setRedirectOnLogin(true)
       }, 700)
     } catch (error) {
