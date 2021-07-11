@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import soundfile from 'assets/welldone.mp3'
 import moment from 'moment'
 import SessionTable from './SessionTable/SessionTable'
-import { publicFetch } from '../util/fetch'
+import { useFetch } from 'context/FetchContext'
 
 const basetime = process.env.REACT_APP_COUNTDOWN_TIME
 const CountdownClock = () => {
@@ -13,7 +13,7 @@ const CountdownClock = () => {
   const [sessionStarted, setSessionStarted] = useState()
   const [history, setHistory] = useState([])
   const [sessionRecordError, setSessionRecordError] = useState()
-
+  const { authClient } = useFetch()
   //make a Audio objects
   const audio = new Audio(soundfile)
 
@@ -84,9 +84,8 @@ const CountdownClock = () => {
         localStorage.getItem('sessionhistory')
       )
       if (sessionHistroylocalstorage.length > 0) {
-        var firstDateofsessionhistory = sessionHistroylocalstorage[0].StartedAt.split(
-          ' '
-        )
+        var firstDateofsessionhistory =
+          sessionHistroylocalstorage[0].StartedAt.split(' ')
         var todayDate = getCurrentTime().split(' ')
 
         if (todayDate[0] === firstDateofsessionhistory[0]) {
@@ -100,16 +99,14 @@ const CountdownClock = () => {
   }, [])
 
   const sendEndSig = () => {
-    let config = {
-      url: '/recordsession',
-      method: 'post',
-      withCredentials: true,
-      data: {
-        startedat: sessionStarted,
-      },
-    }
     try {
-      publicFetch.request(config)
+      authClient(`recordsession`, {
+        method: 'post',
+        withCredentials: true,
+        data: {
+          startedat: sessionStarted,
+        },
+      })
     } catch (e) {
       console.log(e)
       setSessionRecordError(e)
@@ -118,7 +115,7 @@ const CountdownClock = () => {
 
   const renderButtons = () => {
     return (
-      <div className="buttonBlock">
+      <div className="space-x-2 text-center">
         <button
           className={!counting ? ' ActiveButton' : 'ButtonDisabled'}
           disabled={counting}
@@ -132,7 +129,7 @@ const CountdownClock = () => {
         >
           Start
         </button>
-        {'   '}
+
         <button
           className={counting ? ' ActiveButton' : 'ButtonDisabled'}
           disabled={!counting}
@@ -160,26 +157,27 @@ const CountdownClock = () => {
   }
 
   return (
-    <>
-      <div className="page-content">
-        <div className="countdown">
-          <div className="tiles">
-            <span className="minute whitebox">{minute}</span>
-            <span className="second whitebox">{second}</span>
-            <div className="labels">
+    <div className="min-h-screen pt-24 bg-blueGray-800">
+      <div className="mx-auto text-center">
+        <div className="relative top-0 w-1/3 p-12 pt-10 mx-auto text-center shadow-xl h-44 border-1 rounded-xl countdown">
+          <div className="pb-4">
+            <span className="text-7xl whitebox">{minute}</span>
+            <span className="text-7xl whitebox">{second}</span>
+            <div className="relative">
               <li>Mins</li>
               <li>Secs</li>
             </div>
           </div>
         </div>
-        {/* </div> */}
-        {renderButtons()}
+        <div className="mt-4">{renderButtons()}</div>
         {sessionRecordError && (
           <p className="errorMSG">{sessionRecordError} </p>
         )}
-        {history.length > 0 && <SessionTable history={history} />}
+        <div className="flex mt-4 text-center">
+          {history.length > 0 && <SessionTable history={history} />}
+        </div>
       </div>
-    </>
+    </div>
   )
 }
 

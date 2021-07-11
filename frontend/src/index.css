@@ -1,4 +1,13 @@
+@tailwind base;
+
+@tailwind components;
+
+@tailwind utilities;
+* {
+  font-family: 'Roboto Slab', serif;
+}
 body {
+  font-family: 'Roboto Slab', serif;
   /* 'Roboto', 'Roboto Slab' */
   /* display: grid;
     grid-template-areas:
@@ -9,9 +18,9 @@ body {
     grid-gap: 5rem; */
   display: grid;
   grid-template-areas:
-    "nav"
-    "countdown"
-    "button";
+    'nav'
+    'countdown'
+    'button';
 
   grid-gap: 2rem;
 
@@ -20,7 +29,7 @@ body {
   background-color: #1c202a;
   font: normal 13px/20px;
   /* font-family: "Open Sans", sans-serif; */
-  font-family: "Roboto Slab", serif;
+  font-family: 'Roboto Slab', serif;
   word-wrap: break-word;
   color: #eee;
 }
@@ -32,7 +41,7 @@ p {
 
 /* Navbar*/
 .navbar {
-  grid-area: "nav";
+  grid-area: 'nav';
   font-family: Arial, Helvetica, sans-serif;
   overflow: hidden;
   background-color: #1c202a;
@@ -67,22 +76,7 @@ p {
   color: inherit;
   text-decoration: inherit;
 }
-
-.page-content {
-  padding-top: 6rem;
-  grid-area: countdown;
-  justify-content: center;
-  align-items: center;
-  /* display: flex; */
-  /* flex-direction: column; */
-  /* align-items: center;
-      justify-content: center; */
-}
-
 .countdown {
-  width: 430px;
-  height: 120px;
-  text-align: center;
   background: #222;
   background-image: -webkit-linear-gradient(top, #222, #333, #333, #222);
   background-image: -moz-linear-gradient(top, #222, #333, #333, #222);
@@ -92,16 +86,10 @@ p {
   border-radius: 5px;
   box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.6);
   margin: auto;
-  padding: 24px 0;
-  position: relative;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
 }
 
 .countdown:before {
-  content: "";
+  content: '';
   width: 8px;
   height: 65px;
   background: #444;
@@ -119,7 +107,7 @@ p {
 }
 
 .countdown:after {
-  content: "";
+  content: '';
   width: 8px;
   height: 65px;
   background: #444;
@@ -134,14 +122,6 @@ p {
   position: absolute;
   top: 48px;
   right: -10px;
-}
-
-.minute {
-  font: bold 65px "Roboto", "Roboto Slab";
-}
-
-.second {
-  font: bold 65px "Roboto", "Roboto Slab";
 }
 
 .whitebox {
@@ -164,7 +144,7 @@ p {
 }
 
 .whitebox:before {
-  content: "";
+  content: '';
   width: 100%;
   height: 13px;
   background: #111;
@@ -177,7 +157,7 @@ p {
 }
 
 .whitebox:after {
-  content: "";
+  content: '';
   width: 100%;
   height: 1px;
   background: #eee;
@@ -188,17 +168,9 @@ p {
   left: 0;
 }
 
-.labels {
-  width: 100%;
-  height: 25px;
-  text-align: center;
-  position: relative;
-  bottom: -7px;
-}
-
 li {
   width: 102px;
-  font: bold 20px "Roboto Slab";
+  font: bold 20px 'Roboto Slab';
   color: #f47321;
   text-shadow: 1px 1px 0px #000;
   text-align: center;

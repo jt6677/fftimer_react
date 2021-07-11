@@ -1,15 +1,19 @@
 import React from 'react'
-
-import { Client } from 'util/api-client'
-import { useAsync } from 'util/hooks'
+import { Client, GetUser } from 'utils/api-client'
+import { useAsync } from 'utils/hooks'
+import { FullPageSpinner } from 'components/lib'
+// import UnauthenticatedApp from 'unauthenticated-app'
 const AuthContext = React.createContext()
-
 AuthContext.displayName = 'AuthContext'
-async function getUser() {
-  const { username: user } = await Client(`me`)
-  return user
-}
 
+// async function getUser() {
+//   const user = GetUser
+//   return user
+// }
+// async function getUser() {
+//   const user = await Client(`me`)
+//   return user
+// }
 const AuthProvider = (props) => {
   const logout = async () => {
     try {
@@ -21,38 +25,36 @@ const AuthProvider = (props) => {
     }
   }
 
-  const [sessiontableState, setSessiontableState] = React.useState([])
   const {
     data: user,
+    isError,
+    error,
     isLoading,
     isIdle,
-    isError,
     isSuccess,
     run,
-    setData,
     status,
+    setData,
   } = useAsync()
 
   React.useEffect(() => {
-    run(getUser())
+    const userPromise = GetUser()
+    run(userPromise)
   }, [run])
 
   if (isLoading || isIdle) {
-    return <div>Loading</div>
+    return <FullPageSpinner />
   }
 
   if (isError) {
-    return <div>Error, Please reload...</div>
+    console.log(error)
+    const value = { user, setData }
+    return <AuthContext.Provider value={value} {...props} />
+    // return `${error}`
   }
 
   if (isSuccess) {
-    const value = {
-      user,
-      logout,
-      setData,
-      sessiontableState,
-      setSessiontableState,
-    }
+    const value = { user, logout, setData }
     return <AuthContext.Provider value={value} {...props} />
   }
 

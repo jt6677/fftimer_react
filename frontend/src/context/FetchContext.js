@@ -1,41 +1,66 @@
-import React, { createContext, useContext } from "react";
-import axios from "axios";
-import createAuthRefreshInterceptor from "axios-auth-refresh";
-import { AuthContext } from "./AuthContext";
+import React from 'react'
+import axios from 'axios'
+const FetchContext = React.createContext()
+FetchContext.displayName = 'FecthContext'
+const apiURL = process.env.REACT_APP_API_URL
 
-const FetchContext = createContext();
-const { Provider } = FetchContext;
+const FetchProvider = (props) => {
+  const csrfAxios = axios.create({
+    baseURL: apiURL,
+  })
 
-const FetchProvider = ({ children }) => {
-  const authContext = useContext(AuthContext);
+  // React.useEffect(() => {
+  //   const getCsrf = async () => {
+  //     try {
+  //       const {data} = await axios.get('/v1/csrf')
+  //       csrfAxios.defaults.headers['X-CSRF-Token'] = data.csrf
+  //     } catch (error) {
+  //       console.log('csrf error', error)
+  //       window.location.assign(window.location)
+  //     }
+  //   }
+  //   getCsrf()
+  // }, [csrfAxios])
 
-  const authAxios = axios.create({
-    baseURL: process.env.REACT_APP_API_URL,
-  });
-
-  authAxios.interceptors.request.use(
-    (config) => {
-      config.headers.Authorization = `Bearer ${authContext.getAccessToken()}`;
-      return config;
-    },
-    (error) => {
-      return Promise.reject(error);
+  function authClient(endpoint, { data, customHeaders, ...customConfig } = {}) {
+    const config = {
+      url: `/${endpoint}`,
+      method: data ? 'POST' : 'GET',
+      data: data ? JSON.stringify(data) : undefined,
+      headers: {
+        // Authorization: token ? `Bearer ${token}` : undefined,
+        'Content-Type': data ? 'application/json' : undefined,
+        ...customHeaders,
+      },
+      ...customConfig,
     }
-  );
 
-  createAuthRefreshInterceptor(authAxios, authContext.getNewTokenForRequest, {
-    skipWhileRefreshing: false,
-  });
+    return csrfAxios(config).then(async (response) => {
+      if (response.status === 401 && response.status === 403) {
+        // await auth.logout()
+        console.log('csrf failed')
+        window.location.assign(window.location)
+        // queryClient.clear()
+        // return Promise.reject({message: 'Refresh to Get CSRF Token'})
+      }
+      const data = await response.data
+      if (response.status >= 200 && response.status < 300) {
+        return data
+      } else {
+        return Promise.reject(data)
+      }
+    })
+  }
 
-  return (
-    <Provider
-      value={{
-        authAxios,
-      }}
-    >
-      {children}
-    </Provider>
-  );
-};
+  return <FetchContext.Provider value={{ authClient }} {...props} />
+}
 
-export { FetchContext, FetchProvider };
+function useFetch() {
+  const context = React.useContext(FetchContext)
+  if (context === undefined) {
+    throw new Error(`useFetch must be used within a FetchProvider`)
+  }
+  return context
+}
+
+export { FetchProvider, useFetch }

@@ -5,10 +5,12 @@ package main
 
 import (
 	"encoding/gob"
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
 
+	"github.com/gorilla/csrf"
 	"github.com/gorilla/mux"
 	"github.com/gorilla/sessions"
 	"github.com/jt6677/ffdtimer/controllers"
@@ -34,10 +36,7 @@ func main() {
 		models.WithUser(cfg.PwPepper, cfg.HMACkey),
 		models.WithSession(),
 	)
-	// b, err := rand.Bytes(32)
-	// csrfMw := csrf.Protect(b)
 	must(err)
-
 	defer services.Close()
 	// services.DestructiveReset()
 	services.AutoMigrate()
@@ -53,6 +52,12 @@ func main() {
 	}
 
 	r := mux.NewRouter()
+	//CSRF token
+	// b, err := rand.Bytes(32)
+	// must(err)
+	// csrfMw := csrf.Protect(b, csrf.Path("/"))
+	// // csrfMw := csrf.Protect(b, csrf.SameSite(csrf.SameSiteStrictMode), csrf.Path("/"))
+	// r.Use(csrfMw)
 	//csrf
 	// if cfg.IsProd() {
 	// r.HandleFunc("/csrf", csrfResponse)
@@ -67,7 +72,7 @@ func main() {
 	// log.Fatal(http.ListenAndServe(":8080", userMw.Apply(r)))
 
 	//Without api prefix
-	// r.HandleFunc("/api/csrf", csrfResponse)
+	r.HandleFunc("/api/csrf", csrfResponse)
 	r.Handle("/api/favicon.ico", http.NotFoundHandler())
 	r.HandleFunc("/api/me", requireUserMw.ApplyFn(userC.Me)).Methods("GET")
 	r.HandleFunc("/api/signup", userC.SignUp).Methods("POST")
@@ -87,17 +92,17 @@ func must(err error) {
 	}
 }
 
-// func csrfResponse(w http.ResponseWriter, r *http.Request) {
-// 	type CsrfToken struct {
-// 		Csrf string `json:"csrf"`
-// 	}
-// 	csrfResponse := &CsrfToken{
-// 		Csrf: csrf.Token(r),
-// 	}
-// 	// w.Header().Set("X-CSRF-Token", csrf.Token(r))
-// 	err := json.NewEncoder(w).Encode(csrfResponse)
-// 	if err != nil {
-// 		http.Error(w, "Not Authorized", http.StatusUnauthorized)
-// 		return
-// 	}
-// }
+func csrfResponse(w http.ResponseWriter, r *http.Request) {
+	type CsrfToken struct {
+		Csrf string `json:"csrf"`
+	}
+	csrfResponse := &CsrfToken{
+		Csrf: csrf.Token(r),
+	}
+	// w.Header().Set("X-CSRF-Token", csrf.Token(r))
+	err := json.NewEncoder(w).Encode(csrfResponse)
+	if err != nil {
+		http.Error(w, "Not Authorized", http.StatusUnauthorized)
+		return
+	}
+}

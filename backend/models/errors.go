@@ -11,10 +11,10 @@ const (
 	ErrPasswordIncorrect modelError = "models: incorrect password provided"
 	// ErrEmailRequired is returned when an email address is
 	// not provided when creating a user
-	ErrNameOrCellphoneRequired modelError = "models: Name or Cellphone is required"
+	ErrNameOrEmailRequired modelError = "models: Name or Email is required"
 	// ErrEmailInvalid is returned when an email address provided
 	// does not match any of our requirements
-	ErrCellphoneInvalid modelError = "models: cellphone is not valid"
+	ErrEmailInvalid modelError = "models: Email is not valid"
 	// ErrNameTaken is returned when an update or create is attempted
 	// with an email address that is already in use.
 	ErrNameTaken modelError = "models: Name is already taken"

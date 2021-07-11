@@ -1,82 +1,63 @@
 import React, { useState, useEffect } from 'react'
-import { publicFetch } from '../util/fetch'
 import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
-import SVGIcon from './SVGIcon/SVGIcon'
-
-import { useAuth } from 'context/AuthContext'
+import SVGIcon from 'assets/SVGIcon'
+import { useFetch } from 'context/FetchContext'
 import moment from 'moment'
-import Fallfowardpage from './FallFowardPage/fallfowardpage'
+import Fallfowardpage from './fallfowardpage'
 import SessionTable from './SessionTable/SessionTable'
+import { Input, Spinner, InputwithIcon, PrimaryButton } from 'components/lib'
 import { Link } from 'react-router-dom'
+
 const DatePick = () => {
+  const [sessions, setSessions] = useState([])
   const [selecteddate, setSelecteddate] = useState(new Date())
-  const { sessiontableState, setSessiontableState } = useAuth()
-
+  const { authClient } = useFetch()
   const submitDate = async () => {
-    let formatedDate = moment(selecteddate).format('YYYYMMDD')
-    let link = `/dailysession/${formatedDate}`
-    let config = {
-      url: link,
-      method: 'post',
-      withCredentials: true,
-    }
-    try {
-      const data = await publicFetch.request(config)
+    const formatedDate = moment(selecteddate).format('YYYYMMDD')
 
-      setSessiontableState(data.data)
-      // history.push(`/date/${formatedDate}`);
+    try {
+      const data = await authClient(`dailysession/${formatedDate}`, {
+        method: 'post',
+        withCredentials: true,
+      })
+      setSessions(data)
     } catch (e) {
       console.log(e)
     }
   }
   useEffect(() => {
-    ;<SessionTable history={sessiontableState} />
-    return () => {
-      ;<SessionTable history={sessiontableState} />
-    }
-  }, [sessiontableState])
-
+    return <SessionTable history={sessions} />
+  }, [sessions])
   return (
     <>
-      <div className="main-body">
-        <Fallfowardpage showWisdom={true} />
-        <form
-          // className=" signin-container"
-          onSubmit={(evt) => {
-            evt.preventDefault()
-            submitDate()
-          }}
-        >
-          <label htmlFor="name">
-            <SVGIcon className="icon" iconName="calendar" />
-          </label>
-          <DatePicker
-            className="datepicker"
-            selected={selecteddate}
-            onChange={(e) => setSelecteddate(e)}
-            dateFormat="yyyyMMdd"
-            isClearable
-          />
-          <div className="buttonList">
-            {/* <span className="errorMSG">{this.props.errorMSG}</span> */}
-            <ul className="buttons">
-              <li>
-                <input
-                  type="submit"
-                  value="Go"
-                  className="primary signinbutton"
-                />
-              </li>
-              <li>
-                <Link to="/signinandsignup" className="minor">
-                  &#10229; Go back
-                </Link>
-              </li>
-            </ul>
+      <div className="min-h-screen bg-blueGray-800">
+        <div className="flex flex-col items-center justify-center pt-32 text-white ">
+          <Fallfowardpage showWisdom={true} />
+          <form
+            onSubmit={(evt) => {
+              evt.preventDefault()
+              submitDate()
+            }}
+          >
+            <InputwithIcon>
+              <SVGIcon iconName="calendar" />
+              <DatePicker
+                className="w-full p-4 text-lg text-white rounded-r outline-none bg-coolGray-700 hover:bg-coolGray-600"
+                selected={selecteddate}
+                onChange={(e) => setSelecteddate(e)}
+                dateFormat="yyyyMMdd"
+                isClearable
+              />
+            </InputwithIcon>
+            <PrimaryButton className="w-full mt-4" type="submit">
+              <div>Go</div>
+            </PrimaryButton>
+          </form>
+          <div className="flex mt-4 text-center">
+            {sessions.length > 0 ? <SessionTable history={sessions} /> : ''}
           </div>
-        </form>
-        <SessionTable history={sessiontableState} />
+        </div>
       </div>
     </>
   )

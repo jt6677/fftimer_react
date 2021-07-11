@@ -17,12 +17,12 @@ type User struct {
 	Password     string `gorm:"-"`
 	PasswordHash string `gorm:"not null"`
 
-	Cellphone string `gorm:"not null; unique_index"`
+	Email string `gorm:"not null; unique_index"`
 }
 type UserDB interface {
 	// Methods for querying for single users
 	ByID(id uint) (*User, error)
-	ByCellphone(cellphone string) (*User, error)
+	ByEmail(email string) (*User, error)
 	ByName(name string) (*User, error)
 
 	// Methods for altering users
@@ -93,9 +93,9 @@ func (ug *userGorm) ByName(name string) (*User, error) {
 	err := first(db, &user)
 	return &user, err
 }
-func (ug *userGorm) ByCellphone(cellphone string) (*User, error) {
+func (ug *userGorm) ByEmail(email string) (*User, error) {
 	var user User
-	db := ug.db.Where("cellphone = ?", cellphone)
+	db := ug.db.Where("email = ?", email)
 	err := first(db, &user)
 	return &user, err
 }
@@ -130,10 +130,11 @@ func first(db *gorm.DB, dst interface{}) error {
 
 func newUserValidator(udb UserDB, hmac hash.HMAC, pepper string) *userValidator {
 	return &userValidator{
-		UserDB:         udb,
-		hmac:           hmac,
-		cellphoneRegex: regexp.MustCompile(`^[1]([3-9])[0-9]{9}$`),
-		pepper:         pepper,
+		UserDB:     udb,
+		hmac:       hmac,
+		emailRegex: regexp.MustCompile(`^[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,4}$`),
+		// emailRegex: regexp.MustCompile(`^[1]([3-9])[0-9]{9}$`),
+		pepper: pepper,
 	}
 }
 
@@ -141,9 +142,9 @@ var _ UserDB = &userValidator{}
 
 type userValidator struct {
 	UserDB
-	hmac           hash.HMAC
-	cellphoneRegex *regexp.Regexp
-	pepper         string
+	hmac       hash.HMAC
+	emailRegex *regexp.Regexp
+	pepper     string
 }
 
 type userValFunc func(*User) error
@@ -181,7 +182,7 @@ func (uv *userValidator) Create(user *User) error {
 		uv.normalizeName,
 		uv.requireName,
 		uv.nameIsAvail,
-		uv.cellphoneCheck,
+		uv.emailCheck,
 	)
 	if err != nil {
 		return err
@@ -199,7 +200,7 @@ func (uv *userValidator) Update(user *User) error {
 		uv.normalizeName,
 		uv.requireName,
 		uv.nameIsAvail,
-		uv.cellphoneCheck,
+		uv.emailCheck,
 	)
 	if err != nil {
 		return err
@@ -252,17 +253,17 @@ func (uv *userValidator) normalizeName(user *User) error {
 
 func (uv *userValidator) requireName(user *User) error {
 	if user.Name == "" {
-		return ErrNameOrCellphoneRequired
+		return ErrNameOrEmailRequired
 	}
 	return nil
 }
 
-func (uv *userValidator) cellphoneCheck(user *User) error {
-	if user.Cellphone == "" {
+func (uv *userValidator) emailCheck(user *User) error {
+	if user.Email == "" {
 		return nil
 	}
-	if !uv.cellphoneRegex.MatchString(user.Cellphone) {
-		return ErrCellphoneInvalid
+	if !uv.emailRegex.MatchString(user.Email) {
+		return ErrEmailInvalid
 	}
 	return nil
 }

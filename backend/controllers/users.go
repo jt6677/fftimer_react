@@ -25,16 +25,16 @@ func NewUserService(us models.UserService, ss *sessions.CookieStore) *Users {
 }
 
 type SessionUser struct {
-	Username string `json:"username" `
+	Username string `json:"name" `
 }
 
 type SignupJSON struct {
-	Name      string `json:"username"`
-	Password  string `json:"password"`
-	Cellphone string `json:"cellphone"`
+	Name     string `json:"name"`
+	Password string `json:"password"`
+	Email    string `json:"email"`
 }
 type SigninJSON struct {
-	Name     string `json:"username"`
+	Name     string `json:"name"`
 	Password string `json:"password"`
 }
 
@@ -47,9 +47,9 @@ func (u *Users) SignUp(w http.ResponseWriter, r *http.Request) {
 	}
 
 	newuser := models.User{
-		Name:      signupForm.Name,
-		Password:  signupForm.Password,
-		Cellphone: signupForm.Cellphone,
+		Name:     signupForm.Name,
+		Password: signupForm.Password,
+		Email:    signupForm.Email,
 	}
 	if err := u.us.Create(&newuser); err != nil {
 		http.Error(w, err.Error(), http.StatusUnauthorized)
