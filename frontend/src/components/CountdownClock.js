@@ -1,9 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react'
 import soundfile from 'assets/welldone.mp3'
-import moment from 'moment'
-import SessionTable from './SessionTable/SessionTable'
+import SessionTable from './SessionTable'
 import { useFetch } from 'context/FetchContext'
-
+import moment from 'moment'
 const basetime = process.env.REACT_APP_COUNTDOWN_TIME
 const CountdownClock = () => {
   const [timeRemain, setTimeRemain] = useState('')
@@ -36,13 +35,14 @@ const CountdownClock = () => {
         }
       }
       if (timeRemain === 0) {
+        const x = getCurrentTime()
         setCounting(false)
         setHistory([
           ...history,
           {
-            ID: history.length + 1,
-            StartedAt: sessionStarted,
-            UpdatedAt: getCurrentTime(),
+            id: history.length + 1,
+            started: sessionStarted,
+            finished: x,
           },
         ])
 
@@ -53,8 +53,10 @@ const CountdownClock = () => {
   }
 
   useEffect(() => {
-    if (history.length > 0)
+    if (history.length > 0) {
+      console.log(history)
       localStorage.setItem('sessionhistory', JSON.stringify(history))
+    }
   }, [history])
 
   useEffect(() => {
@@ -80,18 +82,26 @@ const CountdownClock = () => {
   )
   useEffect(() => {
     if (localStorage.hasOwnProperty('sessionhistory') === true) {
-      var sessionHistroylocalstorage = JSON.parse(
+      const sessionHistroylocalstorage = JSON.parse(
         localStorage.getItem('sessionhistory')
       )
       if (sessionHistroylocalstorage.length > 0) {
-        var firstDateofsessionhistory =
-          sessionHistroylocalstorage[0].StartedAt.split(' ')
-        var todayDate = getCurrentTime().split(' ')
+        const firstDateofSessionHistory =
+          // sessionHistroylocalstorage[0].started.split(' ')
+          moment(sessionHistroylocalstorage[0].started)
+            .format('YYYY-MM-DD HH:mm:ss')
+            .split(' ')
+        const todayString = getCurrentTime()
+        const todayDate = moment(todayString)
+          .format('YYYY-MM-DD HH:mm:ss')
+          .split(' ')
+        //   .format('YYYY-MM-DD HH:mm:ss')
 
-        if (todayDate[0] === firstDateofsessionhistory[0]) {
+        console.log('object', todayDate)
+        if (todayDate[0] === firstDateofSessionHistory[0]) {
           setHistory(sessionHistroylocalstorage)
         } else {
-          console.log('removed')
+          console.log('Brand New Day! Let us Go!')
           localStorage.removeItem('sessionhistory')
         }
       }
@@ -104,7 +114,8 @@ const CountdownClock = () => {
         method: 'post',
         withCredentials: true,
         data: {
-          startedat: sessionStarted,
+          //update.mutate({finished: now.toISOString()})}
+          started: sessionStarted,
         },
       })
     } catch (e) {
@@ -115,7 +126,7 @@ const CountdownClock = () => {
 
   const renderButtons = () => {
     return (
-      <div className="space-x-2 text-center">
+      <div className="space-x-2 text-center ">
         <button
           className={!counting ? ' ActiveButton' : 'ButtonDisabled'}
           disabled={counting}
@@ -127,7 +138,7 @@ const CountdownClock = () => {
             setCounting(true)
           }}
         >
-          Start
+          <span className="font-bold uppercase">Start</span>
         </button>
 
         <button
@@ -135,7 +146,7 @@ const CountdownClock = () => {
           disabled={!counting}
           onClick={() => setCounting(false)}
         >
-          Pause
+          <span className="font-bold uppercase">Pause</span>
         </button>
       </div>
     )
@@ -143,7 +154,9 @@ const CountdownClock = () => {
 
   const getCurrentTime = () => {
     let d = new Date()
-    let x = moment(d).format('YYYY-MM-DD HH:mm:ss')
+    // let x = moment(d).format('YYYY-MM-DD HH:mm:ss')
+    // return moment(d).format('YYYY-MM-DD HH:mm:ss')
+    let x = d.toISOString()
     return x
   }
 
@@ -159,7 +172,7 @@ const CountdownClock = () => {
   return (
     <div className="min-h-screen pt-24 bg-blueGray-800">
       <div className="mx-auto text-center">
-        <div className="relative top-0 w-1/3 p-12 pt-10 mx-auto text-center shadow-xl h-44 border-1 rounded-xl countdown">
+        <div className="relative top-0 w-9/12 p-12 pt-10 mx-auto text-center shadow-xl lg:w-1/3 h-44 border-1 rounded-xl countdown">
           <div className="pb-4">
             <span className="text-7xl whitebox">{minute}</span>
             <span className="text-7xl whitebox">{second}</span>

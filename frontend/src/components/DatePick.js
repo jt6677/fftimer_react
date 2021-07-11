@@ -5,9 +5,8 @@ import SVGIcon from 'assets/SVGIcon'
 import { useFetch } from 'context/FetchContext'
 import moment from 'moment'
 import Fallfowardpage from './fallfowardpage'
-import SessionTable from './SessionTable/SessionTable'
-import { Input, Spinner, InputwithIcon, PrimaryButton } from 'components/lib'
-import { Link } from 'react-router-dom'
+import SessionTable from './SessionTable'
+import { InputwithIcon, PrimaryButton } from 'components/lib'
 
 const DatePick = () => {
   const [sessions, setSessions] = useState([])
@@ -32,7 +31,7 @@ const DatePick = () => {
   return (
     <>
       <div className="min-h-screen bg-blueGray-800">
-        <div className="flex flex-col items-center justify-center pt-32 text-white ">
+        <div className="flex flex-col items-center justify-center pt-16 text-white lg:pt-32 ">
           <Fallfowardpage showWisdom={true} />
           <form
             onSubmit={(evt) => {
@@ -55,7 +54,8 @@ const DatePick = () => {
             </PrimaryButton>
           </form>
           <div className="flex mt-4 text-center">
-            {sessions.length > 0 ? <SessionTable history={sessions} /> : ''}
+            {/* {sessions.length > 0 ? <SessionTable history={sessions} /> : ''} */}
+            <SessionTable history={sessions} />
           </div>
         </div>
       </div>

@@ -35,7 +35,7 @@ add-apt-repository --yes universe
 apt --yes install postgresql
 
 # Set up the jtforward DB and create a user account with the password entered earlier.
-sudo -i -u postgres psql -c "CREATE DATABASE jtforward"
+sudo -i -u postgres psql -c "CREATE DATABASE fftimer"
 sudo -i -u postgres psql -d jtforward -c "CREATE EXTENSION IF NOT EXISTS citext"
 sudo -i -u postgres psql -d jtforward -c "CREATE ROLE jtforward WITH LOGIN PASSWORD '${DB_PASSWORD}'"
 
