@@ -1,109 +1,85 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect } from 'react'
 import soundfile from 'assets/welldone.mp3'
 import SessionTable from './SessionTable'
 import { useFetch } from 'context/FetchContext'
+import useCountDown from 'utils/useCountDown'
 import moment from 'moment'
-const basetime = process.env.REACT_APP_COUNTDOWN_TIME
+import useLocalStorage from 'utils/useLocalStorage'
+const basetime = 20 * 1000
+// const basetime = parseInt(process.env.REACT_APP_COUNTDOWN_TIME * 1000)
 const CountdownClock = () => {
-  const [timeRemain, setTimeRemain] = useState('')
+  const [timeLeftPersist] = useLocalStorage('timeLeft', basetime)
+  const initialTime =
+    timeLeftPersist && parseInt(timeLeftPersist) !== 0
+      ? parseInt(timeLeftPersist)
+      : basetime
+  const [history, setHistory] = useLocalStorage('history', [])
+  const [timeLeft, actions, counting, finished] = useCountDown(
+    initialTime,
+    1000
+  )
   const [minute, setMinute] = useState('')
   const [second, setSecond] = useState('')
-  const [counting, setCounting] = useState(false)
-  const [sessionStarted, setSessionStarted] = useState()
-  const [history, setHistory] = useState([])
+  const [startedAt, setStartedAt] = useState()
   const [sessionRecordError, setSessionRecordError] = useState()
   const { authClient } = useFetch()
-  //make a Audio objects
   const audio = new Audio(soundfile)
 
-  function useInterval(callback, timeRemain) {
-    const savedCallback = useRef()
-    useEffect(() => {
-      savedCallback.current = callback
-    }, [callback])
+  // useEffect(() => {
+  //   if (history.length > 0) {
+  //     localStorage.setItem('sessionhistory', JSON.stringify(history))
+  //   }
+  // }, [history])
 
-    useEffect(() => {
-      function tick() {
-        savedCallback.current()
-      }
-
-      if (timeRemain > 0) {
-        let id = setInterval(tick, 1000)
-
-        return () => {
-          clearInterval(id)
-        }
-      }
-      if (timeRemain === 0) {
-        const x = getCurrentTime()
-        setCounting(false)
-        setHistory([
-          ...history,
-          {
-            id: history.length + 1,
-            started: sessionStarted,
-            finished: x,
-          },
-        ])
-
-        sendEndSig()
-        audio.play()
-      }
-    }, [timeRemain])
-  }
+  // useEffect(() => {
+  //   const localStorageTimeRemain = localStorage.getItem('timeRemain')
+  //   // if (localStorage.hasOwnProperty('timeRemain') === true) {
+  //   if (localStorageTimeRemain !== '0' && localStorageTimeRemain !== null) {
+  //     setTimeRemain(localStorageTimeRemain)
+  //   } else {
+  //     setTimeRemain(basetime)
+  //   }
+  // }, [])
 
   useEffect(() => {
-    if (history.length > 0) {
-      console.log(history)
-      localStorage.setItem('sessionhistory', JSON.stringify(history))
-    }
-  }, [history])
-
+    changeMinSec(timeLeft)
+    // setTimeLeftPersist(timeLeft)
+  }, [timeLeft])
   useEffect(() => {
-    const localStorageTimeRemain = localStorage.getItem('timeRemain')
-    // if (localStorage.hasOwnProperty('timeRemain') === true) {
-    if (localStorageTimeRemain !== '0' && localStorageTimeRemain !== null) {
-      setTimeRemain(localStorageTimeRemain)
-    } else {
-      setTimeRemain(basetime)
-    }
+    changeMinSec(initialTime)
+    // setTimeLeftPersist(timeLeft)
   }, [])
 
   useEffect(() => {
-    changeMinSec(timeRemain)
-    localStorage.setItem('timeRemain', timeRemain)
-  }, [timeRemain])
+    if (finished === true) {
+      // console.log('finished', finished)
+      audio.play()
+      sendEndSig()
+      setHistory([
+        ...history,
+        {
+          id: history.length + 1,
+          started: startedAt,
+          finished: getCurrentTime(),
+        },
+      ])
+    }
+  }, [finished])
 
-  useInterval(
-    () => {
-      setTimeRemain(timeRemain - 1)
-    },
-    counting ? timeRemain : null
-  )
   useEffect(() => {
-    if (localStorage.hasOwnProperty('sessionhistory') === true) {
-      const sessionHistroylocalstorage = JSON.parse(
-        localStorage.getItem('sessionhistory')
-      )
-      if (sessionHistroylocalstorage.length > 0) {
-        const firstDateofSessionHistory =
-          // sessionHistroylocalstorage[0].started.split(' ')
-          moment(sessionHistroylocalstorage[0].started)
-            .format('YYYY-MM-DD HH:mm:ss')
-            .split(' ')
-        const todayString = getCurrentTime()
-        const todayDate = moment(todayString)
-          .format('YYYY-MM-DD HH:mm:ss')
-          .split(' ')
-        //   .format('YYYY-MM-DD HH:mm:ss')
+    if (history.length > 0) {
+      const firstDateofSessionHistory =
+        // sessionHistroylocalstorage[0].started.split(' ')
+        moment(history[0].started).format('YYYY-MM-DD HH:mm:ss').split(' ')
+      const todayString = getCurrentTime()
+      const todayDate = moment(todayString)
+        .format('YYYY-MM-DD HH:mm:ss')
+        .split(' ')
+      //   .format('YYYY-MM-DD HH:mm:ss')
 
-        console.log('object', todayDate)
-        if (todayDate[0] === firstDateofSessionHistory[0]) {
-          setHistory(sessionHistroylocalstorage)
-        } else {
-          console.log('Brand New Day! Let us Go!')
-          localStorage.removeItem('sessionhistory')
-        }
+      if (todayDate[0] !== firstDateofSessionHistory[0]) {
+        console.log('Brand New Day! Let us Go!')
+        setHistory([])
       }
     }
   }, [])
@@ -114,8 +90,7 @@ const CountdownClock = () => {
         method: 'post',
         withCredentials: true,
         data: {
-          //update.mutate({finished: now.toISOString()})}
-          started: sessionStarted,
+          started: startedAt,
         },
       })
     } catch (e) {
@@ -124,45 +99,15 @@ const CountdownClock = () => {
     }
   }
 
-  const renderButtons = () => {
-    return (
-      <div className="space-x-2 text-center ">
-        <button
-          className={!counting ? ' ActiveButton' : 'ButtonDisabled'}
-          disabled={counting}
-          onClick={() => {
-            if (timeRemain === 0) {
-              setTimeRemain(basetime)
-            }
-            setSessionStarted(getCurrentTime())
-            setCounting(true)
-          }}
-        >
-          <span className="font-bold uppercase">Start</span>
-        </button>
-
-        <button
-          className={counting ? ' ActiveButton' : 'ButtonDisabled'}
-          disabled={!counting}
-          onClick={() => setCounting(false)}
-        >
-          <span className="font-bold uppercase">Pause</span>
-        </button>
-      </div>
-    )
-  }
-
   const getCurrentTime = () => {
     let d = new Date()
-    // let x = moment(d).format('YYYY-MM-DD HH:mm:ss')
-    // return moment(d).format('YYYY-MM-DD HH:mm:ss')
     let x = d.toISOString()
     return x
   }
 
   const changeMinSec = (x) => {
-    var minutes = parseInt(x / 60, 10)
-    let seconds = parseInt(x % 60, 10)
+    let minutes = parseInt(x / 60 / 1000)
+    let seconds = parseInt((x / 1000) % 60)
     minutes = minutes < 10 ? '0' + minutes : minutes
     seconds = seconds < 10 ? '0' + seconds : seconds
     setMinute(minutes)
@@ -182,7 +127,32 @@ const CountdownClock = () => {
             </div>
           </div>
         </div>
-        <div className="mt-4">{renderButtons()}</div>
+        <div className="mt-4">
+          <div className="space-x-2 text-center ">
+            <button
+              className={!counting ? ' ActiveButton' : 'ButtonDisabled'}
+              disabled={counting}
+              onClick={() => {
+                if (timeLeft === 0) {
+                  actions.start()
+                  setStartedAt(getCurrentTime())
+                } else {
+                  actions.resume()
+                }
+              }}
+            >
+              <span className="font-bold uppercase">Start</span>
+            </button>
+
+            <button
+              className={counting ? ' ActiveButton' : 'ButtonDisabled'}
+              disabled={!counting}
+              onClick={() => actions.pause()}
+            >
+              <span className="font-bold uppercase">Pause</span>
+            </button>
+          </div>
+        </div>
         {sessionRecordError && (
           <p className="errorMSG">{sessionRecordError} </p>
         )}
