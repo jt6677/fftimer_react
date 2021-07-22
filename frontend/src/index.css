@@ -8,14 +8,6 @@
 }
 body {
   font-family: 'Roboto Slab', serif;
-  /* 'Roboto', 'Roboto Slab' */
-  /* display: grid;
-    grid-template-areas:
-        "nav"
-        "main"
-        "foot"; */
-  /* display: flex;
-    grid-gap: 5rem; */
   display: grid;
   grid-template-areas:
     'nav'
@@ -38,7 +30,6 @@ p {
   font-size: 20px;
   margin: 4px;
 }
-
 /* Navbar*/
 .navbar {
   grid-area: 'nav';

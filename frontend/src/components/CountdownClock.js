@@ -5,8 +5,8 @@ import { useFetch } from 'context/FetchContext'
 import useCountDown from 'utils/useCountDown'
 import moment from 'moment'
 import useLocalStorage from 'utils/useLocalStorage'
-const basetime = 20 * 1000
-// const basetime = parseInt(process.env.REACT_APP_COUNTDOWN_TIME * 1000)
+// const basetime = 20 * 1000
+const basetime = parseInt(process.env.REACT_APP_COUNTDOWN_TIME * 1000)
 const CountdownClock = () => {
   const [timeLeftPersist] = useLocalStorage('timeLeft', basetime)
   const initialTime =
@@ -25,29 +25,11 @@ const CountdownClock = () => {
   const { authClient } = useFetch()
   const audio = new Audio(soundfile)
 
-  // useEffect(() => {
-  //   if (history.length > 0) {
-  //     localStorage.setItem('sessionhistory', JSON.stringify(history))
-  //   }
-  // }, [history])
-
-  // useEffect(() => {
-  //   const localStorageTimeRemain = localStorage.getItem('timeRemain')
-  //   // if (localStorage.hasOwnProperty('timeRemain') === true) {
-  //   if (localStorageTimeRemain !== '0' && localStorageTimeRemain !== null) {
-  //     setTimeRemain(localStorageTimeRemain)
-  //   } else {
-  //     setTimeRemain(basetime)
-  //   }
-  // }, [])
-
   useEffect(() => {
     changeMinSec(timeLeft)
-    // setTimeLeftPersist(timeLeft)
   }, [timeLeft])
   useEffect(() => {
     changeMinSec(initialTime)
-    // setTimeLeftPersist(timeLeft)
   }, [])
 
   useEffect(() => {
@@ -68,15 +50,13 @@ const CountdownClock = () => {
 
   useEffect(() => {
     if (history.length > 0) {
-      const firstDateofSessionHistory =
-        // sessionHistroylocalstorage[0].started.split(' ')
-        moment(history[0].started).format('YYYY-MM-DD HH:mm:ss').split(' ')
+      const firstDateofSessionHistory = moment(history[0].started)
+        .format('YYYY-MM-DD HH:mm:ss')
+        .split(' ')
       const todayString = getCurrentTime()
       const todayDate = moment(todayString)
         .format('YYYY-MM-DD HH:mm:ss')
         .split(' ')
-      //   .format('YYYY-MM-DD HH:mm:ss')
-
       if (todayDate[0] !== firstDateofSessionHistory[0]) {
         console.log('Brand New Day! Let us Go!')
         setHistory([])
@@ -98,7 +78,6 @@ const CountdownClock = () => {
       setSessionRecordError(e)
     }
   }
-
   const getCurrentTime = () => {
     let d = new Date()
     let x = d.toISOString()
@@ -117,7 +96,7 @@ const CountdownClock = () => {
   return (
     <div className="min-h-screen pt-24 bg-blueGray-800">
       <div className="mx-auto text-center">
-        <div className="relative top-0 w-9/12 p-12 pt-10 mx-auto text-center shadow-xl lg:w-1/3 h-44 border-1 rounded-xl countdown">
+        <div className="relative top-0 p-12 pt-10 mx-auto text-center shadow-xl w-80 h-44 border-1 rounded-xl countdown">
           <div className="pb-4">
             <span className="text-7xl whitebox">{minute}</span>
             <span className="text-7xl whitebox">{second}</span>

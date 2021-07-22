@@ -2,6 +2,7 @@
   "name": "fftimer",
   "version": "2.1.0",
   "private": false,
+  "license": "SEE LICENSE IN <filename>",
   "proxy": "http://localhost:8080",
   "dependencies": {
     "@craco/craco": "^6.2.0",
@@ -59,8 +60,8 @@
     ]
   },
   "devDependencies": {
-    "autoprefixer": "^9.8.6",
-    "postcss": "^7.0.36",
-    "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.2.4"
+    "autoprefixer": "^9",
+    "postcss": "^7",
+    "tailwindcss": "npm:@tailwindcss/postcss7-compat"
   }
 }

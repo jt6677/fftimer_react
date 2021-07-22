@@ -22,29 +22,28 @@ send-script:
 execute-script:
 	ssh -t root@${REMOTE_IP} "bash /root/setup/01.sh"
 
+# ==============================================================================
 #Deploy Go api to remote
-.PHONY:production/deploy-backend
-production/deploy-backend:
+.PHONY:deploy-backend
+deploy-backend:
 	@echo "building Go binary "
 	make build-backend
 	@echo "copying Go from local to server"
-	rsync -rP --delete ./backend/bin/api ${USER}@${REMOTE_IP}:/etc/www/backend/
-	@echo "copying .config from local to server"
-	rsync -rP --delete ./backend/.config ${USER}@${REMOTE_IP}:/etc/www/backend/
+	rsync -rP --delete ./backend/app/bin/api ${USER}@${REMOTE_IP}:/etc/www/backend/
 	@echo "gaining permission to api binary"
 	ssh -t  ${USER}@${REMOTE_IP}	'\
 	chmod u+x /etc/www/backend/api \
 	'
 
 #Deploy React frontend to remote
-.PHONY:production/deploy-frontend
-production/deploy-frontend:
+.PHONY:deploy-frontend
+deploy-frontend:
 	@echo "copying React from local to server"
 	rsync -rP --delete ./frontend/build ${USER}@${REMOTE_IP}:/etc/www/frontend
 
 #Upload api.service and make it run in background
-.PHONY: production/api.service
-production/api.service:
+.PHONY:depoly-api.service
+depoly-api.service:
 	rsync -P ./remote/production/api.service ${USER}@${REMOTE_IP}:~
 	ssh -t ${USER}@${REMOTE_IP} '\
 		sudo mv ~/api.service /etc/systemd/system/ \
@@ -52,8 +51,8 @@ production/api.service:
 		&& sudo systemctl restart api \
 	'
 ## production/configure/caddyfile: configure the production Caddyfile
-.PHONY: production/caddyfile
-production/caddyfile:
+.PHONY:deploy-caddyfile
+deploy-caddyfile:
 	rsync -P ./remote/production/Caddyfile ${USER}@${REMOTE_IP}:~
 	ssh -t ${USER}@${REMOTE_IP} '\
 		sudo mv ~/Caddyfile /etc/caddy/ \
@@ -61,19 +60,26 @@ production/caddyfile:
 	'
 # ==============================================================================
 # Building system
+##backend Golang tidy
 .PHONY:tidy
 tidy:
 	(cd backend; go mod tidy)
 	(cd backend; go mod vendor)
 
+##frontend npm install
+.PHONY: build-frontend-install
+build-frontend-install:
+	@echo 'Install React File ...'
+	(cd frontend;  cnpm install)
+
 ## build-backend: build the Go backend binary and output to /bin/api
 .PHONY: build-backend
 build-backend:
 	@echo 'Building Go Binary...'
-	(cd backend;  GOOS=linux GOARCH=amd64  go build -o=./bin/api . )
+	(cd backend/app;  GOOS=linux GOARCH=amd64  go build -o=./bin/api . )
+
 ## build-frontend: build the React frontend
 .PHONY: build-frontend
 build-frontend:
 	@echo 'Building React File ...'
-	(cd frontend;  cnpm install)
 	(cd frontend;  npm run build)
