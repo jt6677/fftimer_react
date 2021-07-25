@@ -1,7 +1,8 @@
 /** @jsxImportSource @emotion/react */
 import tw, { styled } from 'twin.macro'
 // import styled from '@emotion/styled/macro'
-
+import { useField } from 'formik'
+import SVGIcon from 'assets/SVGIcon'
 import { keyframes } from '@emotion/react'
 import { FaSpinner } from 'react-icons/fa'
 import { Link as RouterLink } from 'react-router-dom'
@@ -48,20 +49,24 @@ const Label = tw.div`
 bg-coolGray-700 rounded-l p-3`
 const Input = tw.input` bg-coolGray-700 rounded-r outline-none text-white w-full hover:bg-coolGray-600
 `
-// const Input = styled.input`
-//   background-color: #3b4148;
-//   border: none;
-//   border-radius: 4px;
-//   color: #fff;
-//   width: 100%;
-//   height: 3.8rem;
-
-//   &:hover,
-//   &:focus {
-//     background-color: #434a52;
-//     outline: none;
-//   }
-// `
+const FormInput = ({ ariaLabel, name, type, placeholder, ref, autoFocus }) => {
+  const [field] = useField(name)
+  return (
+    <InputwithIcon>
+      <SVGIcon iconName={name} />
+      <Input
+        className="text-black"
+        {...field}
+        ariaLabel={ariaLabel}
+        name={field.name}
+        type={type}
+        placeholder={placeholder}
+        autoFocus={autoFocus}
+        autoComplete="off"
+      />
+    </InputwithIcon>
+  )
+}
 
 const Link = tw(
   RouterLink
@@ -143,12 +148,14 @@ function FullPageErrorFallback({ error }) {
     </div>
   )
 }
+
 export {
   FullPageSpinner,
   PrimaryButton,
   Fallfowardpage,
   SecondaryButton,
   Input,
+  FormInput,
   CircleButton,
   InputwithIcon,
   Label,

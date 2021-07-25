@@ -4,7 +4,11 @@ import '@reach/dialog/styles.css'
 import { Signup } from 'components/Signup.js'
 import { Login } from 'components/Login.js'
 import { SecondaryButton, PrimaryButton, Fallfowardpage } from 'components/lib'
-import { Modal, ModalContents, ModalOpenButton } from 'components/modal'
+import {
+  Modal,
+  ModalContents,
+  ModalOpenButton,
+} from 'components/modal/animatedModal'
 
 function UnauthenticatedApp() {
   const [, setOpenModal] = React.useState('none')

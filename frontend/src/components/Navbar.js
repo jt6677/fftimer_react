@@ -1,7 +1,11 @@
 import React from 'react'
 import { Link } from 'components/lib'
 import { useAuth } from 'context/AuthContext'
-import { Modal, ModalContents, ModalOpenButton } from 'components/modal'
+import {
+  Modal,
+  ModalContents,
+  ModalOpenButton,
+} from 'components/modal/animatedModal'
 function Navbar() {
   const { user, logout } = useAuth()
   const [, setOpenModal] = React.useState('none')

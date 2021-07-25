@@ -2,7 +2,7 @@
 
 import * as React from 'react'
 import VisuallyHidden from '@reach/visually-hidden'
-import { CircleButton } from './lib'
+import { CircleButton } from '../lib'
 import '@reach/dialog/styles.css'
 import { DialogOverlay, DialogContent } from '@reach/dialog'
 const callAll =
@@ -32,14 +32,13 @@ function ModalOpenButton({ children: child }) {
   })
 }
 
-function ModalContents({ title, children, ...props }) {
+function ModalContents({ children, ...props }) {
   const [isOpen, setIsOpen] = React.useContext(ModalContext)
   return (
     <DialogOverlay
       style={{ background: 'hsla(224, 34%, 64%, 0.85)' }}
       isOpen={isOpen}
       onDismiss={() => setIsOpen(false)}
-      {...props}
     >
       <DialogContent
         className=" rounded-xl"
@@ -49,6 +48,7 @@ function ModalContents({ title, children, ...props }) {
           margin: '22vh  auto',
           maxWidth: '450px',
         }}
+        {...props}
       >
         <div className="flex justify-end ">
           <ModalDismissButton>

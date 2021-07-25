@@ -1,5 +1,5 @@
 /** @jsxImportSource @emotion/react */
-import React from 'react'
+import React, { useRef, useEffect } from 'react'
 import SVGIcon from 'assets/SVGIcon'
 import { FaTimes } from 'react-icons/fa'
 import { Form, Formik, ErrorMessage, useField } from 'formik'
@@ -7,28 +7,12 @@ import * as Yup from 'yup'
 import * as colors from 'styles/colors'
 import { useAuth } from 'context/AuthContext'
 import { useFetch } from 'context/FetchContext'
-import { Input, Spinner, InputwithIcon, PrimaryButton } from 'components/lib'
+import { FormInput, Spinner, PrimaryButton } from 'components/lib'
 import { Redirect } from 'react-router-dom'
 const LoginSchema = Yup.object().shape({
   name: Yup.string().required('Username is required'),
   password: Yup.string().required('Password is required'),
 })
-
-const FormInput = ({ ariaLabel, name, type, placeholder }) => {
-  const [field] = useField(name)
-  return (
-    <InputwithIcon>
-      <SVGIcon iconName={name} />
-      <Input
-        {...field}
-        ariaLabel={ariaLabel}
-        name={field.name}
-        type={type}
-        placeholder={placeholder}
-      />
-    </InputwithIcon>
-  )
-}
 
 function Login() {
   const { setData } = useAuth()
@@ -36,7 +20,7 @@ function Login() {
   const [isError, setIsError] = React.useState()
   const [redirectOnLogin, setRedirectOnLogin] = React.useState(false)
   const [isLoading, setIsLoading] = React.useState(false)
-  const { authClient } = useFetch()
+  const { authClient } = useFetch(null)
 
   const handleSubmit = async (credentials) => {
     try {
@@ -54,16 +38,6 @@ function Login() {
       }, 500)
     } catch (error) {
       setIsLoading(false)
-      // console.log(error.response.status)
-      // if (error.response.status === 403) {
-      //   // await auth.logout()
-      //   // console.log('csrf failed')      setTimeout(() => {
-      //   setTimeout(() => {
-      //     setIsError('csrf failed,refreshing client')
-      //     window.location.assign(window.location)
-      //     setIsSuccess(null)
-      //   }, 500)
-      // }
       console.log('err', error.response.data)
       setIsError(error.response.data)
       setIsSuccess(null)
@@ -89,6 +63,7 @@ function Login() {
                   name="name"
                   type="text"
                   placeholder="  Username or Cellphone"
+                  autoFocus={true}
                 />
                 <div className="text-red-600">
                   <ErrorMessage name="name" />
