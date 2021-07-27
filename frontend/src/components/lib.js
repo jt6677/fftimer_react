@@ -33,8 +33,6 @@ p-3 text-xl font-bold text-center text-white uppercase transition duration-300 b
 //   margin-bottom: 1rem;
 //   // //
 // `
-const InputwithIcon = tw.div`
-flex align-middle`
 
 // const Label = styled.div`
 //   background-color: #363b41;
@@ -47,6 +45,8 @@ flex align-middle`
 // `
 const Label = tw.div`
 bg-coolGray-700 rounded-l p-3`
+
+const InputwithIcon = tw.div`flex align-middle`
 const Input = tw.input` bg-coolGray-700 rounded-r outline-none text-white w-full hover:bg-coolGray-600
 `
 const FormInput = ({ ariaLabel, name, type, placeholder, ref, autoFocus }) => {
@@ -152,8 +152,8 @@ function FullPageErrorFallback({ error }) {
 export {
   FullPageSpinner,
   PrimaryButton,
-  Fallfowardpage,
   SecondaryButton,
+  Fallfowardpage,
   Input,
   FormInput,
   CircleButton,

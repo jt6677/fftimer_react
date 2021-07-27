@@ -11,9 +11,6 @@ import {
 } from 'components/modal/animatedModal'
 
 function UnauthenticatedApp() {
-  const [, setOpenModal] = React.useState('none')
-  // const [isModalOpen, setIsModalOpen] = React.useState(false)
-
   return (
     <div className="min-h-screen bg-blueGray-800">
       <div className="flex flex-col items-center justify-center pt-32 text-white ">
@@ -21,9 +18,7 @@ function UnauthenticatedApp() {
         <div className="flex flex-col w-1/5 mt-4 space-y-5 ">
           <Modal>
             <ModalOpenButton>
-              <PrimaryButton onClick={() => setOpenModal('login')}>
-                Login
-              </PrimaryButton>
+              <PrimaryButton>Login</PrimaryButton>
             </ModalOpenButton>
             <ModalContents aria-label="Login form">
               <Login />
@@ -32,9 +27,7 @@ function UnauthenticatedApp() {
 
           <Modal>
             <ModalOpenButton>
-              <SecondaryButton onClick={() => setOpenModal('signup')}>
-                Sign up
-              </SecondaryButton>
+              <SecondaryButton>Sign up</SecondaryButton>
             </ModalOpenButton>
             <ModalContents aria-label="Sign up form">
               <Signup />

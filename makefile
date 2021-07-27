@@ -72,14 +72,14 @@ build-frontend-install:
 	@echo 'Install React File ...'
 	(cd frontend;  cnpm install)
 
-## build-backend: build the Go backend binary and output to /bin/api
-.PHONY: build-backend
-build-backend:
-	@echo 'Building Go Binary...'
-	(cd backend/app;  GOOS=linux GOARCH=amd64  go build -o=./bin/api . )
-
 ## build-frontend: build the React frontend
 .PHONY: build-frontend
 build-frontend:
 	@echo 'Building React File ...'
 	(cd frontend;  npm run build)
+	
+## build-backend: build the Go backend binary and output to /bin/api
+.PHONY: build-backend
+build-backend:
+	@echo 'Building Go Binary...'
+	(cd backend/app;  GOOS=linux GOARCH=amd64  go build -o=./bin/api . )

@@ -57,13 +57,6 @@ const CountdownClock = () => {
     }, [timeRemain])
   }
 
-  // useEffect(() => {
-  //   if (history.length > 0) {
-  //     console.log(history)
-  //     localStorage.setItem('sessionhistory', JSON.stringify(history))
-  //   }
-  // }, [history])
-
   useEffect(() => {
     // const localStorageTimeRemain = localStorage.getItem('timeRemain')
     if (timeLeftPersist !== '0' && timeLeftPersist !== null) {
@@ -71,6 +64,7 @@ const CountdownClock = () => {
     } else {
       setTimeRemain(basetime)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useEffect(() => {
@@ -81,6 +75,7 @@ const CountdownClock = () => {
     setMinute(minutes)
     setSecond(seconds)
     setTimeLeftPersist(timeRemain)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [timeRemain])
 
   useInterval(
@@ -105,6 +100,7 @@ const CountdownClock = () => {
         setHistory([])
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const sendEndSig = () => {

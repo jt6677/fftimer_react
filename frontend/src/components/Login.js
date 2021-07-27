@@ -1,8 +1,7 @@
 /** @jsxImportSource @emotion/react */
-import React, { useRef, useEffect } from 'react'
-import SVGIcon from 'assets/SVGIcon'
+import React from 'react'
 import { FaTimes } from 'react-icons/fa'
-import { Form, Formik, ErrorMessage, useField } from 'formik'
+import { Form, Formik, ErrorMessage } from 'formik'
 import * as Yup from 'yup'
 import * as colors from 'styles/colors'
 import { useAuth } from 'context/AuthContext'

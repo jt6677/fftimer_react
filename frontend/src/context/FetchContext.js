@@ -22,14 +22,22 @@ const FetchProvider = (props) => {
   //   getCsrf()
   // }, [csrfAxios])
 
-  function authClient(endpoint, { data, customHeaders, ...customConfig } = {}) {
+  function authClient(
+    endpoint,
+    { data, files, customHeaders, ...customConfig } = {}
+  ) {
     const config = {
       url: `/${endpoint}`,
       method: data ? 'POST' : 'GET',
-      data: data ? JSON.stringify(data) : undefined,
+      // data: data,
+      data: data ? JSON.stringify(data) : files ? files : undefined,
       headers: {
         // Authorization: token ? `Bearer ${token}` : undefined,
-        'Content-Type': data ? 'application/json' : undefined,
+        'Content-Type': data
+          ? 'application/json'
+          : files
+          ? 'multipart/form-data'
+          : undefined,
         ...customHeaders,
       },
       ...customConfig,

@@ -105,3 +105,6 @@ func (a *App) SignalShutdown() {
 func (a *App) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	a.otmux.ServeHTTP(w, r)
 }
+func (a *App) FileServer(pathPrefix string, stripPrefix string, fileHandler http.Handler) {
+	a.mux.PathPrefix(pathPrefix).Handler(http.StripPrefix(stripPrefix, fileHandler))
+}

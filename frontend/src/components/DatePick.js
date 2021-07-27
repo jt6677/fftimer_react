@@ -4,9 +4,8 @@ import 'react-datepicker/dist/react-datepicker.css'
 import SVGIcon from 'assets/SVGIcon'
 import { useFetch } from 'context/FetchContext'
 import moment from 'moment'
-import Fallfowardpage from './fallfowardpage'
 import SessionTable from './SessionTable'
-import { InputwithIcon, PrimaryButton } from 'components/lib'
+import { InputwithIcon, Fallfowardpage, PrimaryButton } from 'components/lib'
 
 const DatePick = () => {
   const [sessions, setSessions] = useState([])

@@ -6,9 +6,10 @@ import {
   ModalContents,
   ModalOpenButton,
 } from 'components/modal/animatedModal'
+import { UploadFiles } from './uploadFiles'
 function Navbar() {
   const { user, logout } = useAuth()
-  const [, setOpenModal] = React.useState('none')
+  // const [, setOpenModal] = React.useState('none')
   return (
     <div className="w-full h-12 bg-coolGray-900">
       <Link to="/clock">Timer</Link>
@@ -18,12 +19,10 @@ function Navbar() {
       {/* <Link>hi, {user.name}</Link> */}
       <Modal>
         <ModalOpenButton>
-          <Link onClick={() => setOpenModal('lfg')}>hi, {user.name}</Link>
+          <Link>hi, {user.name}</Link>
         </ModalOpenButton>
-        <ModalContents aria-label="Login form">
-          <h2 className="text-6xl text-center text-pink-600">
-            <strong>Let's Go!!</strong>
-          </h2>
+        <ModalContents aria-label="upload form">
+          <UploadFiles />
         </ModalContents>
       </Modal>
     </div>

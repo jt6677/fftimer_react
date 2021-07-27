@@ -14,7 +14,7 @@ const callAll =
   (...args) =>
     fns.forEach((fn) => fn && fn(...args))
 
-const ModalContext = React.createContext()
+export const ModalContext = React.createContext()
 
 function Modal(props) {
   const [isOpen, setIsOpen] = React.useState(false)

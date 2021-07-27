@@ -23,7 +23,7 @@ import (
 var build = "v3.1_ArdansLab_TailwindCSS"
 
 func main() {
-	log := log.New(os.Stdout, "Crawler: ", log.LstdFlags|log.Lmicroseconds|log.Lshortfile)
+	log := log.New(os.Stdout, "FFtimer: ", log.LstdFlags|log.Lmicroseconds|log.Lshortfile)
 	if err := run(log); err != nil {
 		log.Println("main: error:", err)
 		os.Exit(1)
@@ -38,10 +38,11 @@ func run(log *log.Logger) error {
 			// APIHost         string        `conf:"default:0.0.0.0:3000"`
 			APIHost         string        `conf:"default:localhost:8080"`
 			DebugHost       string        `conf:"default:0.0.0.0:4000"`
-			ReadTimeout     time.Duration `conf:"default:5s"`
-			WriteTimeout    time.Duration `conf:"default:5s"`
-			ShutdownTimeout time.Duration `conf:"default:5s"`
+			ReadTimeout     time.Duration `conf:"default:20s"`
+			WriteTimeout    time.Duration `conf:"default:20s"`
+			ShutdownTimeout time.Duration `conf:"default:10s"`
 			SessionSecret   string        `conf:"default:lfgggg"`
+			MaxMultipartMem int           `conf:"default:2048576"`
 		}
 		DB struct {
 			User       string `conf:"default:postgres"`
@@ -146,7 +147,7 @@ func run(log *log.Logger) error {
 
 	api := http.Server{
 		Addr:         cfg.Web.APIHost,
-		Handler:      handlers.API(build, shutdown, db, log, auth),
+		Handler:      handlers.API(build, cfg.Web.MaxMultipartMem, shutdown, db, log, auth),
 		ReadTimeout:  cfg.Web.ReadTimeout,
 		WriteTimeout: cfg.Web.WriteTimeout,
 	}
