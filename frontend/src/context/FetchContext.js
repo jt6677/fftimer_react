@@ -59,10 +59,8 @@ const FetchProvider = (props) => {
       }
     })
   }
-
   return <FetchContext.Provider value={{ authClient }} {...props} />
 }
-
 function useFetch() {
   const context = React.useContext(FetchContext)
   if (context === undefined) {
