@@ -23,7 +23,8 @@ ssh-root:
 .PHONY:ssh-user
 ssh-user:
 	ssh ${USER}@${REMOTE_IP}
-
+# ==============================================================================
+# from scratch to deployed
 #Upload script to Remote
 #Exectue script
 #Saving script as unix first
@@ -37,6 +38,19 @@ deploy-script:
 		chmod +x /root/setup/01.sh \
 		&& bash /root/setup/01.sh \
 	'
+.PHONY:deploy-app
+deploy-app:
+
+	@echo "deploy-backend"
+	make deploy-backend
+	@echo "deploy-frontend"
+	make deploy-frontend
+	@echo "deploy-api.service"
+	make deploy-api.service
+	@echo "deploy-caddyfile"
+	make deploy-caddyfile
+	@echo "deployment completed"
+
 
 # ==============================================================================
 #Deploy Go api to remote
@@ -64,8 +78,8 @@ deploy-frontend:
 	rsync -rP --delete ./frontend/build -e "ssh -i ${SSHKEYLOCATION}" root@${REMOTE_IP}:/etc/www/frontend
 
 #Upload api.service and make it run in background
-.PHONY:depoly-api.service
-depoly-api.service:
+.PHONY:deploy-api.service
+deploy-api.service:
 	rsync -P ./remote/production/api.service -e "ssh -i ${SSHKEYLOCATION}" root@${REMOTE_IP}:~
 	ssh -i ${SSHKEYLOCATION} -t root@${REMOTE_IP} '\
 		sudo mv ~/api.service /etc/systemd/system/ \
@@ -79,6 +93,7 @@ deploy-caddyfile:
 	ssh -i ${SSHKEYLOCATION} -t root@${REMOTE_IP} '\
 		sudo mv ~/Caddyfile /etc/caddy/ \
 		&& sudo systemctl reload caddy \
+		&& reboot \
 	'
 # ==============================================================================
 # Building system
@@ -98,4 +113,4 @@ build-backend:
 .PHONY: build-frontend
 build-frontend:
 	@echo 'Building React File ...'
-	(cd frontend;  cnpm install;  npm run build)
+	(cd frontend;  npm install;  npm run build)

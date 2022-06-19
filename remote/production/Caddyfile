@@ -6,11 +6,11 @@
 
 # Remove the http:// prefix from your site address.
 
-jtforward.ga/api/* {
+homebh.cf/api/* {
   reverse_proxy localhost:8080
  }
 
-jtforward.ga {
+homebh.cf {
   root * /etc/www/frontend/build
   try_files {path} /index.html
   file_server
